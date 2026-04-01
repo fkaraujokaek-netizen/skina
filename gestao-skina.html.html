@@ -842,7 +842,7 @@ Batata frita 15 kg 6,00"
 <!-- ESTOQUE -->
 <div class="pg" id="pg-est">
   <h2>📦 Estoque Central</h2>
-  <div class="sub">Todos os produtos · atualizado automaticamente pelas Entradas</div>
+  <div class="sub">Visão completa por categoria · Integrado com Entradas e Distribuições em tempo real</div>
 
   <!-- Cards de resumo -->
   <div class="cards" id="est-resumo-cards" style="margin-bottom:16px"></div>
@@ -851,58 +851,32 @@ Batata frita 15 kg 6,00"
   <div class="fx" style="margin-bottom:14px;gap:10px;flex-wrap:wrap">
     <input type="text" id="est-busca" placeholder="🔍 Buscar produto..." oninput="rEst()"
       style="flex:1;min-width:180px;background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
-    <select id="est-cat-fil" onchange="rEst()" style="background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
-      <option value="all">Todas as categorias</option>
-      <option>Pães</option><option>Carnes/Proteínas</option><option>Queijos</option>
-      <option>Molhos/Condimentos</option><option>Vegetais</option><option>Embalagens</option>
-      <option>Bebidas</option><option>Batatas</option><option>Ingredientes</option>
-      <option>Limpeza</option><option>Produtos Secos</option><option>Resfriados</option><option>Outros</option>
+    <select id="est-mes-ref" onchange="rEst()" style="background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
     </select>
     <button class="btn bgr sm" onclick="estSyncEntradas()">🔄 Sincronizar</button>
     <button class="btn bg sm" onclick="estImprimirTabela()">🖨️ Imprimir</button>
-    <button class="btn bo sm" onclick="estToggleCadastro()">⚙️ Novo Produto</button>
+    <button class="btn bo sm" onclick="estToggleCadastro()" id="btn-cadastro-toggle">⚙️ Ajuste</button>
   </div>
 
-  <!-- Formulário de novo produto (colapsado) -->
+  <!-- Formulário de ajuste manual (colapsado) -->
   <div id="est-cadastro-wrap" style="display:none;margin-bottom:16px">
     <div class="fb">
-      <h3>➕ Novo Produto Manual</h3>
+      <h3>⚙️ Ajuste Manual</h3>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">Corrija quantidades ou defina mínimos. Os produtos aparecem automaticamente pelas Entradas.</div>
       <div class="fg">
         <div class="g"><label>Nome</label><input type="text" id="e-nm" placeholder="Ex: Pão Brioche 100un"></div>
         <div class="g"><label>Categoria</label><select id="e-cat"><option>Pães</option><option>Carnes/Proteínas</option><option>Queijos</option><option>Molhos/Condimentos</option><option>Vegetais</option><option>Embalagens</option><option>Bebidas</option><option>Batatas</option><option>Ingredientes</option><option>Limpeza</option><option>Produtos Secos</option><option>Resfriados</option><option>Outros</option></select></div>
-        <div class="g"><label>Unidade</label><select id="e-un"><option>un</option><option>kg</option><option>g</option><option>L</option><option>ml</option><option>cx</option><option>pct</option></select></div>
-        <div class="g"><label>Qtd Inicial</label><input type="number" id="e-qt" placeholder="0" min="0" step="0.01"></div>
-        <div class="g"><label>Qtd Mínima</label><input type="number" id="e-mn" placeholder="0" min="0" step="0.01"></div>
+        <div class="g"><label>Medida</label><select id="e-un"><option>un</option><option>kg</option><option>g</option><option>L</option><option>ml</option><option>cx</option><option>pct</option></select></div>
+        <div class="g"><label>Qtd Atual</label><input type="number" id="e-qt" placeholder="0" min="0" step="0.01"></div>
+        <div class="g"><label>Qtd Mínima (alerta)</label><input type="number" id="e-mn" placeholder="0" min="0" step="0.01"></div>
         <div class="g"><label>Custo Unit. (R$)</label><input type="number" id="e-cs" placeholder="0,00" min="0" step="0.01"></div>
       </div>
       <button class="btn bg" onclick="addE()">+ Salvar</button>
     </div>
   </div>
 
-  <!-- Tabela estilo Excel -->
-  <div class="tw">
-    <div class="th fxb">
-      <h3>📋 Lista de Produtos</h3>
-      <span id="est-count" style="font-size:12px;color:#888"></span>
-    </div>
-    <div class="ts">
-      <table id="est-tabela" style="width:100%;border-collapse:collapse;min-width:600px">
-        <thead>
-          <tr style="background:#1a1a1a;position:sticky;top:0;z-index:2">
-            <th style="text-align:left;padding:10px 14px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Produto</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Categoria</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Un.</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Custo Unit.</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Qtd Estoque</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Valor Total</th>
-            <th style="padding:10px 10px;font-size:11px;color:#555;text-align:center;white-space:nowrap">⚙️</th>
-          </tr>
-        </thead>
-        <tbody id="est-tbody"></tbody>
-        <tfoot id="est-tfoot"></tfoot>
-      </table>
-    </div>
-  </div>
+  <!-- Tabela por categoria -->
+  <div id="est-tabela-wrap"></div>
 </div>
 
 
@@ -1794,136 +1768,269 @@ function addE(){
   toast('✅ Produto cadastrado!'); rEst(); popProds();
 }
 
-function rEst(){
-  let prods = DB.get('estoque');
-  const busca = gv('est-busca').toLowerCase();
-  const catFil = gv('est-cat-fil');
+function estPopMesRef(){
+  const sel = document.getElementById('est-mes-ref');
+  if(!sel) return;
+  const now = new Date();
+  let opts = '';
+  for(let i=0; i<6; i++){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const lbl = `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    opts += `<option value="${val}"${i===0?' selected':''}>${lbl}</option>`;
+  }
+  sel.innerHTML = opts;
+}
 
+function rEst(){
+  estPopMesRef();
+  const busca = gv('est-busca').toLowerCase();
+  const mesRef = gv('est-mes-ref') || (() => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; })();
+
+  // Primeiro dia do mês selecionado
+  const [anoRef, mmRef] = mesRef.split('-');
+  const primeiroDia = `${anoRef}-${mmRef}-01`;
+  const ultimoDia = `${anoRef}-${mmRef}-31`;
+
+  let prods = DB.get('estoque');
   if(busca) prods = prods.filter(p=>p.nome.toLowerCase().includes(busca));
-  if(catFil && catFil!=='all') prods = prods.filter(p=>p.categoria===catFil);
   prods.sort((a,b)=>a.nome.localeCompare(b.nome));
 
+  // Calcula movimentações do mês por produto
+  const entradas = DB.get('entradas')||[];
+  const dists = DB.get('distribuicoes')||[];
+
+  // Mapa de movimentações do mês atual
+  const mov = {};
+  prods.forEach(p=>{ mov[p.id]={iniMes:0, entrou:0, saiu:0, lojas:{}}; });
+
+  // Entradas do mês
+  entradas.filter(e=>e.data>=primeiroDia&&e.data<=ultimoDia).forEach(e=>{
+    if(mov[e.produtoId]) mov[e.produtoId].entrou += parseFloat(e.quantidade)||0;
+  });
+
+  // Saídas (distribuições) do mês — por loja
+  dists.filter(d=>d.data>=primeiroDia&&d.data<=ultimoDia).forEach(d=>{
+    (d.itens||[]).forEach(i=>{
+      if(mov[i.prodId]){
+        const qtd = parseFloat(i.quantidade)||0;
+        mov[i.prodId].saiu += qtd;
+        const loja = d.destino||'—';
+        if(!mov[i.prodId].lojas[loja]) mov[i.prodId].lojas[loja]=0;
+        mov[i.prodId].lojas[loja] += qtd;
+      }
+    });
+  });
+
+  // Estoque inicial = atual - entradas + saídas do mês
+  prods.forEach(p=>{
+    const m = mov[p.id]||{entrou:0,saiu:0};
+    m.iniMes = Math.max(0, (p.quantidade||0) - m.entrou + m.saiu);
+    mov[p.id] = m;
+  });
+
   // Cards resumo
-  const todos = DB.get('estoque');
-  const criticos = todos.filter(p=>p.minimo>0&&p.quantidade<=p.minimo).length;
-  const valorTotal = todos.reduce((s,p)=>s+(p.quantidade*p.custo),0);
   const resumo = document.getElementById('est-resumo-cards');
-  if(resumo) resumo.innerHTML=`
-    <div class="c go"><div class="lb">Total Produtos</div><div class="vl">${todos.length}</div></div>
-    <div class="c bl"><div class="lb">Valor em Estoque</div><div class="vl" style="font-size:14px">${fm(valorTotal)}</div></div>
-    <div class="c ${criticos>0?'re':'gr'}"><div class="lb">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2">abaixo do mínimo</div></div>
-    <div class="c"><div class="lb">Exibindo</div><div class="vl">${prods.length}</div><div class="sb2">de ${todos.length}</div></div>`;
+  if(resumo){
+    const criticos = prods.filter(p=>p.minimo>0&&p.quantidade<=p.minimo).length;
+    const valorTotal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
+    const totalEntrou = Object.values(mov).reduce((s,m)=>s+m.entrou,0);
+    const totalSaiu = Object.values(mov).reduce((s,m)=>s+m.saiu,0);
+    resumo.innerHTML=`
+      <div class="c go"><div class="lb">Total Produtos</div><div class="vl">${prods.length}</div></div>
+      <div class="c bl"><div class="lb">Valor em Estoque</div><div class="vl" style="font-size:15px">${fm(valorTotal)}</div></div>
+      <div class="c gr"><div class="lb">Entrou no Mês</div><div class="vl" style="font-size:15px">${fn(totalEntrou)}</div><div class="sb2">unidades</div></div>
+      <div class="c or"><div class="lb">Saiu no Mês</div><div class="vl" style="font-size:15px">${fn(totalSaiu)}</div><div class="sb2">unidades</div></div>
+      <div class="c ${criticos>0?'re':''}"><div class="lb">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2">abaixo do mínimo</div></div>`;
+  }
 
-  const cnt = document.getElementById('est-count');
-  if(cnt) cnt.textContent = `${prods.length} produto(s)`;
+  // Agrupa por categoria
+  const cats = {};
+  prods.forEach(p=>{
+    const cat = p.categoria||'Outros';
+    if(!cats[cat]) cats[cat]=[];
+    cats[cat].push(p);
+  });
 
-  const tbody = document.getElementById('est-tbody');
-  const tfoot = document.getElementById('est-tfoot');
-  if(!tbody) return;
+  const wrap = document.getElementById('est-tabela-wrap');
+  if(!wrap) return;
 
   if(!prods.length){
-    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#888">
-      <div style="font-size:36px;margin-bottom:10px">📦</div>
-      <div style="font-weight:600;color:#fff;margin-bottom:8px">Estoque vazio</div>
-      <div style="font-size:13px;margin-bottom:14px">Registre entradas ou clique em Sincronizar</div>
-      <button class="btn bgr" onclick="estSyncEntradas()">🔄 Sincronizar com Entradas</button>
-    </td></tr>`;
-    if(tfoot) tfoot.innerHTML='';
+    wrap.innerHTML=`<div style="text-align:center;padding:40px;color:#888">
+      <div style="font-size:44px;margin-bottom:12px">📦</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:#fff">Estoque vazio</div>
+      <div style="font-size:13px;margin-bottom:16px">Registre Entradas ou clique em Sincronizar para carregar os produtos.</div>
+      <button class="btn bgr" onclick="estSyncEntradas()" style="font-size:14px;padding:10px 20px">🔄 Sincronizar com Entradas</button>
+    </div>`;
     return;
   }
 
-  tbody.innerHTML = prods.map((p,i)=>{
-    const critico = p.minimo>0&&p.quantidade<=p.minimo;
-    const corQtd = critico?'var(--re)':p.quantidade>0?'var(--gr)':'var(--mu)';
-    return `<tr style="background:${i%2===0?'#1e1e1e':'#232323'};border-bottom:1px solid #2a2a2a${critico?';outline:1px solid rgba(231,76,60,0.3)':''}">
-      <td style="padding:10px 14px;font-size:13px;font-weight:600;color:#fff">
-        ${p.nome}
-        ${critico?'<span style="font-size:9px;background:rgba(231,76,60,.2);color:var(--re);padding:1px 5px;border-radius:6px;margin-left:5px">⚠️ CRÍTICO</span>':''}
-      </td>
-      <td style="padding:10px;text-align:center;font-size:11px;color:#888">${p.categoria||'—'}</td>
-      <td style="padding:10px;text-align:center;font-size:12px;color:#aaa">${p.unidade}</td>
-      <td style="padding:10px;text-align:right;font-size:13px;color:#d4a843">${fm(p.custo)}</td>
-      <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:${corQtd}">${fn(p.quantidade)}</td>
-      <td style="padding:10px;text-align:right;font-size:13px;font-weight:600;color:var(--ac)">${fm(p.quantidade*p.custo)}</td>
-      <td style="padding:10px;text-align:center">
-        <div style="display:flex;gap:4px;justify-content:center">
-          <button class="btn bo sm" onclick="ajE('${p.id}')" style="padding:3px 8px;font-size:11px" title="Ajustar quantidade">±</button>
-          <button class="btn bo sm" onclick="estEditMin('${p.id}')" style="padding:3px 6px;font-size:11px" title="Definir mínimo">🔔</button>
-          <button class="btn br sm" onclick="delIt('estoque','${p.id}',rEst)" style="padding:3px 6px;font-size:11px">🗑</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+  const iconeCat = {
+    'Pães':'🍞','Carnes/Proteínas':'🥩','Queijos':'🧀','Molhos/Condimentos':'🫙',
+    'Vegetais':'🥦','Embalagens':'📦','Bebidas':'🥤','Batatas':'🥔',
+    'Ingredientes':'🧂','Limpeza':'🧹','Produtos Secos':'🌾','Resfriados':'❄️','Outros':'📋'
+  };
 
-  // Rodapé com totais
-  const totQtd = prods.reduce((s,p)=>s+p.quantidade,0);
-  const totVal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
-  if(tfoot) tfoot.innerHTML=`<tr style="background:#111;border-top:2px solid #d4a843">
-    <td style="padding:10px 14px;font-weight:700;color:#d4a843;font-size:13px" colspan="4">TOTAL GERAL (${prods.length} produtos)</td>
-    <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:#d4a843">${fn(totQtd)}</td>
-    <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:var(--ac)">${fm(totVal)}</td>
-    <td></td>
-  </tr>`;
+  wrap.innerHTML = Object.entries(cats).map(([cat, itens])=>{
+    const totIni = itens.reduce((s,p)=>s+(mov[p.id]?.iniMes||0),0);
+    const totEnt = itens.reduce((s,p)=>s+(mov[p.id]?.entrou||0),0);
+    const totSai = itens.reduce((s,p)=>s+(mov[p.id]?.saiu||0),0);
+    const totAtual = itens.reduce((s,p)=>s+(p.quantidade||0),0);
+    const totValor = itens.reduce((s,p)=>s+(p.quantidade*p.custo),0);
+    const icone = iconeCat[cat]||'📋';
+
+    const rows = itens.map(p=>{
+      const m = mov[p.id]||{iniMes:0,entrou:0,saiu:0,lojas:{}};
+      const critico = p.minimo>0&&p.quantidade<=p.minimo;
+      const corQtd = critico?'var(--re)':p.quantidade>0?'var(--gr)':'var(--mu)';
+      const lojasTxt = m.saiu>0 ? Object.entries(m.lojas||{}).map(([lj,qt])=>`<span style="font-size:10px;background:rgba(212,168,67,.12);color:#d4a843;padding:1px 5px;border-radius:4px;display:inline-block;margin:1px">${lj}: ${fn(qt)}</span>`).join('') : '—';
+      return `<tr style="${critico?'background:rgba(231,76,60,0.05)':''}">
+        <td style="padding:9px 13px;font-size:13px;font-weight:600;color:#fff">
+          ${p.nome}
+          ${critico?'<span style="font-size:9px;background:rgba(231,76,60,.2);color:var(--re);padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:700">⚠️ CRÍTICO</span>':''}
+        </td>
+        <td style="padding:9px 8px;text-align:center;color:#aaa;font-size:12px">${p.unidade}</td>
+        <td style="padding:9px 8px;text-align:center;color:#888;font-size:13px">${fn(m.iniMes)}</td>
+        <td style="padding:9px 8px;text-align:center;color:var(--gr);font-size:13px;font-weight:600">${m.entrou>0?'+'+fn(m.entrou):'—'}</td>
+        <td style="padding:9px 8px;text-align:center;color:var(--re);font-size:13px;font-weight:600">${m.saiu>0?'-'+fn(m.saiu):'—'}</td>
+        <td style="padding:9px 8px;font-size:11px;color:#aaa">${lojasTxt}</td>
+        <td style="padding:9px 8px;text-align:center;font-size:15px;font-weight:800;color:${corQtd}">${fn(p.quantidade)}</td>
+        <td style="padding:9px 8px;text-align:center;color:var(--ac);font-size:12px">${fm(p.quantidade*p.custo)}</td>
+        <td style="padding:9px 8px;text-align:center">
+          <button class="btn bo sm" onclick="ajE('${p.id}')" style="padding:3px 8px;font-size:11px">±</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="tw" style="margin-bottom:16px">
+      <div class="th fxb" style="background:linear-gradient(135deg,#222,#2a2a2a)">
+        <h3 style="font-size:14px">${icone} ${cat} <span style="font-size:11px;color:#888;font-weight:400;margin-left:6px">${itens.length} produto(s)</span></h3>
+        <div style="font-size:12px;color:var(--ac);font-weight:600">${fm(totValor)}</div>
+      </div>
+      <div class="ts">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#1a1a1a">
+              <th style="text-align:left;padding:8px 13px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px">Produto</th>
+              <th style="padding:8px 8px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center">Un.</th>
+              <th style="padding:8px 8px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:center">Início Mês</th>
+              <th style="padding:8px 8px;font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:1px;text-align:center">Entrou</th>
+              <th style="padding:8px 8px;font-size:10px;color:var(--re);text-transform:uppercase;letter-spacing:1px;text-align:center">Saiu</th>
+              <th style="padding:8px 8px;font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px">Destino (loja)</th>
+              <th style="padding:8px 8px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center">Atual</th>
+              <th style="padding:8px 8px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:center">Valor</th>
+              <th style="padding:8px 8px;font-size:10px;color:#555;text-align:center">⚙️</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+            <tr style="background:#222;border-top:2px solid #d4a843">
+              <td style="padding:8px 13px;font-weight:700;color:#d4a843;font-size:12px">TOTAL ${cat.toUpperCase()}</td>
+              <td></td>
+              <td style="padding:8px;text-align:center;color:#888;font-size:12px;font-weight:600">${fn(totIni)}</td>
+              <td style="padding:8px;text-align:center;color:var(--gr);font-size:12px;font-weight:700">${totEnt>0?'+'+fn(totEnt):'—'}</td>
+              <td style="padding:8px;text-align:center;color:var(--re);font-size:12px;font-weight:700">${totSai>0?'-'+fn(totSai):'—'}</td>
+              <td></td>
+              <td style="padding:8px;text-align:center;color:#d4a843;font-size:14px;font-weight:800">${fn(totAtual)}</td>
+              <td style="padding:8px;text-align:center;color:var(--ac);font-size:12px;font-weight:700">${fm(totValor)}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function estImprimirTabela(){
+  const busca = gv('est-busca').toLowerCase();
+  const mesRef = gv('est-mes-ref') || (() => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; })();
+  const [anoRef, mmRef] = mesRef.split('-');
+  const primeiroDia = `${anoRef}-${mmRef}-01`;
+  const ultimoDia = `${anoRef}-${mmRef}-31`;
   let prods = DB.get('estoque');
+  if(busca) prods = prods.filter(p=>p.nome.toLowerCase().includes(busca));
   prods.sort((a,b)=>a.nome.localeCompare(b.nome));
+
+  const entradas = DB.get('entradas')||[];
+  const dists = DB.get('distribuicoes')||[];
+  const mov = {};
+  prods.forEach(p=>{ mov[p.id]={iniMes:0,entrou:0,saiu:0,lojas:{}}; });
+  entradas.filter(e=>e.data>=primeiroDia&&e.data<=ultimoDia).forEach(e=>{
+    if(mov[e.produtoId]) mov[e.produtoId].entrou += parseFloat(e.quantidade)||0;
+  });
+  dists.filter(d=>d.data>=primeiroDia&&d.data<=ultimoDia).forEach(d=>{
+    (d.itens||[]).forEach(i=>{
+      if(mov[i.prodId]){
+        const qtd = parseFloat(i.quantidade)||0;
+        mov[i.prodId].saiu += qtd;
+        const loja = d.destino||'—';
+        if(!mov[i.prodId].lojas[loja]) mov[i.prodId].lojas[loja]=0;
+        mov[i.prodId].lojas[loja] += qtd;
+      }
+    });
+  });
+  prods.forEach(p=>{
+    const m=mov[p.id]||{entrou:0,saiu:0};
+    m.iniMes=Math.max(0,(p.quantidade||0)-m.entrou+m.saiu);
+  });
+
+  const cats = {};
+  prods.forEach(p=>{ const c=p.categoria||'Outros'; if(!cats[c])cats[c]=[]; cats[c].push(p); });
   const cfg = getCfg();
   const logoHtml = localStorage.getItem('img_sysLogo') ? `<img src="${localStorage.getItem('img_sysLogo')}" style="height:50px;object-fit:contain;display:block;margin:0 auto 8px">` : '';
-  const totVal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
 
-  const rows = prods.map((p,i)=>{
-    const critico = p.minimo>0&&p.quantidade<=p.minimo;
-    return `<tr style="background:${i%2===0?'#fff':'#f9f9f7'}${critico?';background:#fff5f5':''}">
-      <td style="padding:7px 12px;font-size:12px;font-weight:600">${p.nome}${critico?' ⚠️':''}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.categoria||'—'}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.unidade}</td>
-      <td style="padding:7px 10px;text-align:right;font-size:12px;color:#8B6914">${fm(p.custo)}</td>
-      <td style="padding:7px 10px;text-align:right;font-size:14px;font-weight:800;color:${critico?'red':'#2e7d32'}">${fn(p.quantidade)}</td>
-      <td style="padding:7px 10px;text-align:right;font-size:12px;font-weight:600;color:#1a5276">${fm(p.quantidade*p.custo)}</td>
-    </tr>`;
-  }).join('');
+  let tabelas = Object.entries(cats).map(([cat,itens])=>`
+    <div style="margin-bottom:20px;page-break-inside:avoid">
+      <div style="background:#d4a843;color:#000;padding:8px 12px;font-weight:700;font-size:13px;border-radius:6px 6px 0 0">${cat}</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#f5f0e0">
+          <th style="text-align:left;padding:7px 10px;font-size:11px;border-bottom:1px solid #ddd">Produto</th>
+          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center">Un.</th>
+          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center">Início Mês</th>
+          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center;color:green">Entrou</th>
+          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center;color:red">Saiu</th>
+          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd">Destino (loja)</th>
+          <th style="padding:7px 8px;font-size:12px;border-bottom:1px solid #ddd;text-align:center;font-weight:800;color:#b8860b">Atual</th>
+        </tr></thead>
+        <tbody>
+          ${itens.map((p,i)=>{
+            const m=mov[p.id]||{iniMes:0,entrou:0,saiu:0};
+            const critico=p.minimo>0&&p.quantidade<=p.minimo;
+            return `<tr style="background:${i%2===0?'#fff':'#fafaf5'}${critico?';background:#fff0f0':''}">
+              <td style="padding:7px 10px;font-size:12px;font-weight:600">${p.nome}${critico?' ⚠️':''}</td>
+              <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.unidade}</td>
+              <td style="padding:7px 8px;text-align:center;font-size:12px;color:#666">${fn(m.iniMes)}</td>
+              <td style="padding:7px 8px;text-align:center;font-size:12px;color:green;font-weight:600">${m.entrou>0?'+'+fn(m.entrou):'—'}</td>
+              <td style="padding:7px 8px;text-align:center;font-size:12px;color:red;font-weight:600">${m.saiu>0?'-'+fn(m.saiu):'—'}</td>
+              <td style="padding:7px 8px;font-size:11px;color:#555">${m.saiu>0?Object.entries(m.lojas||{}).map(([lj,qt])=>`${lj}: ${fn(qt)}`).join(', '):'—'}</td>
+              <td style="padding:7px 8px;text-align:center;font-size:14px;font-weight:800;color:${critico?'red':'#b8860b'}">${fn(p.quantidade)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`).join('');
 
-  const win = window.open('about:blank','_blank');
-  const html = `<!DOCTYPE html><html><head>
-    <meta charset="UTF-8"><title>Estoque Central — ${new Date().toLocaleDateString('pt-BR')}</title>
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8"><title>Estoque Central — ${mmRef}/${anoRef}</title>
     <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;padding:20px;max-width:900px;margin:0 auto;color:#333}
-    @media print{.no-print{display:none}@page{margin:12mm;size:A4}}</style>
-  </head><body>
-    <div class="no-print" style="position:fixed;top:10px;right:10px;display:flex;gap:8px;z-index:999;background:#fff;padding:6px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
-      <button onclick="window.print()" style="background:#d4a843;color:#000;border:none;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">🖨️ Imprimir / Salvar PDF</button>
-      <button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:9px 12px;border-radius:6px;cursor:pointer">✕</button>
+    @media print{.no-print{display:none}@page{margin:12mm;size:A4}}
+    </style></head><body>
+    <div class="no-print" style="position:fixed;top:10px;right:10px;display:flex;gap:8px;z-index:999">
+      <button onclick="window.print()" style="background:#d4a843;color:#000;border:none;padding:10px 20px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer">🖨️ Imprimir / Salvar PDF</button>
+      <button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:10px 14px;border-radius:7px;cursor:pointer">✕</button>
     </div>
-    <div style="margin-top:50px;text-align:center;border-bottom:3px solid #d4a843;padding-bottom:14px;margin-bottom:20px">
+    <div style="margin-top:50px;text-align:center;border-bottom:3px solid #d4a843;padding-bottom:16px;margin-bottom:20px">
       ${logoHtml}
-      <div style="font-size:22px;font-weight:800">${cfg.logo.replace('\n',' ')}</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px">📦 ESTOQUE CENTRAL</div>
-      <div style="font-size:12px;color:#666;margin-top:4px">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+      <div style="font-size:24px;font-weight:800;color:#1a1a18">${cfg.logo.replace('\n',' ')}</div>
+      <div style="font-size:18px;font-weight:700;margin-top:8px">📦 ESTOQUE CENTRAL</div>
+      <div style="font-size:13px;color:#555;margin-top:4px">Mês: ${mmRef}/${anoRef} &nbsp;·&nbsp; Gerado em ${new Date().toLocaleString('pt-BR')}</div>
     </div>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr style="background:#d4a843">
-        <th style="text-align:left;padding:8px 12px;font-size:11px;color:#000;text-transform:uppercase">Produto</th>
-        <th style="padding:8px;font-size:11px;color:#000;text-transform:uppercase;text-align:center">Categoria</th>
-        <th style="padding:8px;font-size:11px;color:#000;text-transform:uppercase;text-align:center">Un.</th>
-        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Custo Unit.</th>
-        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Qtd Estoque</th>
-        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Valor Total</th>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot><tr style="background:#222">
-        <td colspan="4" style="padding:9px 12px;font-weight:700;color:#d4a843;font-size:13px">TOTAL GERAL — ${prods.length} produtos</td>
-        <td style="padding:9px 10px;text-align:right;font-weight:800;font-size:14px;color:#d4a843">${fn(prods.reduce((s,p)=>s+p.quantidade,0))}</td>
-        <td style="padding:9px 10px;text-align:right;font-weight:800;font-size:14px;color:#d4a843">${fm(totVal)}</td>
-      </tfoot>
-    </table>
-  </body></html>`;
-  if(win){ win.document.write(html); win.document.close(); }
-  else toast('⚠️ Permita popups no navegador para imprimir!');
+    ${tabelas}
+  </body></html>`);
+  win.document.close();
 }
-
-
-
 
 
 function ajE(id){
