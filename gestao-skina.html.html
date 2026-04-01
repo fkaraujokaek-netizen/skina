@@ -65,6 +65,10 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#1a1a18;letter-spaci
 .th{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #333333;flex-wrap:wrap;gap:8px;background:#222222}
 .th h3{font-size:14px;font-weight:600;color:#d4a843}
 .ts{overflow-x:auto}
+/* Modo Admin — edição de labels */
+body.modo-admin [data-label]{cursor:pointer;outline:1px dashed rgba(212,168,67,.4);outline-offset:2px;border-radius:3px;transition:outline .15s}
+body.modo-admin [data-label]:hover{outline:2px solid #d4a843;background:rgba(212,168,67,.08)}
+body.modo-admin [data-label]:focus{outline:2px solid #d4a843;background:rgba(212,168,67,.12);color:#fff}
 /* Edição inline universal */
 .ts td input, .ts td select{background:transparent;border:none;border-bottom:1px solid transparent;color:inherit;font:inherit;outline:none;padding:1px 2px;transition:border-color .15s;width:100%}
 .ts td input:focus, .ts td select:focus{border-bottom-color:#d4a843!important;background:rgba(212,168,67,.05)}
@@ -466,11 +470,11 @@ select option{background:#222222;color:#ffffff}
     <a onclick="P('ft')"><span class="i">📋</span>Fichas Técnicas</a>
     <div class="s">Operacional</div>
     <a onclick="P('massa')"><span class="i">⚡</span>Lançamento em Massa</a>
-    <a onclick="P('est')"><span class="i">📦</span>Estoque Central</a>
-    <a onclick="P('ent')"><span class="i">🛒</span>Entradas</a>
-    <a onclick="P('dist')"><span class="i">🚚</span>Distribuição</a>
-    <a onclick="P('relatorio')"><span class="i">📊</span>Relatório Produção</a>
-    <a onclick="P('pdf')"><span class="i">🖨️</span>Relatórios PDF</a>
+    <a onclick="P('est')"><span class="i">📦</span><span data-label="nav-estoque">Estoque</span> Central</a>
+    <a onclick="P('ent')"><span class="i">🛒</span><span data-label="nav-entradas">Entradas</span></a>
+    <a onclick="P('dist')"><span class="i">🚚</span><span data-label="nav-dist">Distribuição</span></a>
+    <a onclick="P('relatorio')"><span class="i">📊</span><span data-label="nav-relatorio">Relatório Produção</span></a>
+    <a onclick="P('pdf')"><span class="i">🖨️</span><span data-label="nav-pdf">Relatórios PDF</span></a>
     <a onclick="P('loj')"><span class="i">🏪</span>Lojas</a>
     <a onclick="P('cmv')"><span class="i">📊</span>Contagem &amp; CMV</a>
     <div class="s">Sistema</div>
@@ -484,7 +488,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- DASHBOARD -->
 <div class="pg on" id="pg-dash">
-  <div id="dash-logo-area"></div><h2>Dashboard Geral</h2><div class="sub" id="ds-sub"></div>
+  <div id="dash-logo-area"></div><h2 data-label="h2-dashboard">Dashboard Geral</h2><div class="sub" id="ds-sub"></div>
   <div id="ds-alr"></div>
   <div class="cards" id="ds-cards"></div>
   <div class="g2">
@@ -495,7 +499,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- ANÁLISE MENSAL / ANUAL -->
 <div class="pg" id="pg-analise">
-  <h2>📅 Análise Mensal &amp; Anual</h2>
+  <h2 data-label="h2-analise">📅 Análise Mensal &amp; Anual</h2>
   <div class="sub" id="an-sub">Comparativo completo mês a mês — atualiza automaticamente</div>
 
   <!-- SELETOR -->
@@ -517,7 +521,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- ALERTAS -->
 <div class="pg" id="pg-alert">
-  <h2>Central de Alertas</h2><div class="sub">Boletos vencidos, vencendo em 7 dias e estoque crítico</div>
+  <h2 data-label="h2-alertas">Central de Alertas</h2><div class="sub">Boletos vencidos, vencendo em 7 dias e estoque crítico</div>
   <div id="alr-c"></div>
 </div>
 
@@ -601,7 +605,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- DRE -->
 <div class="pg" id="pg-dre">
-  <h2>DRE — Demonstrativo</h2><div class="sub">Resultado financeiro anual e mensal</div>
+  <h2 data-label="h2-dre">DRE — Demonstrativo</h2><div class="sub">Resultado financeiro anual e mensal</div>
   <div class="fx" style="margin-bottom:18px">
     <div class="g"><label>Ano</label><select id="dre-ano" onchange="rDRE()"></select></div>
     <div class="g"><label>Período</label><select id="dre-mes" onchange="rDRE()"><option value="all">Anual Completo</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
@@ -612,7 +616,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- FLUXO -->
 <div class="pg" id="pg-flx">
-  <h2>Fluxo de Caixa</h2><div class="sub">Entradas e saídas mensais</div>
+  <h2 data-label="h2-fluxo">Fluxo de Caixa</h2><div class="sub">Entradas e saídas mensais</div>
   <div class="fx" style="margin-bottom:18px">
     <div class="g"><label>Ano</label><select id="flx-ano" onchange="rFlx()"></select></div>
     <div class="g"><label>Unidade</label><select id="flx-un" onchange="rFlx()"><option value="all">Todas</option></select></div>
@@ -622,7 +626,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- FICHAS TÉCNICAS -->
 <div class="pg" id="pg-ft">
-  <h2>Fichas Técnicas</h2>
+  <h2 data-label="h2-fichas">Fichas Técnicas</h2>
   <div class="sub">Cadastre produtos, ingredientes, custos — calcule CMV e preço de venda</div>
 
   <!-- LISTA -->
@@ -696,7 +700,7 @@ select option{background:#222222;color:#ffffff}
 
 <!-- LANÇAMENTO EM MASSA -->
 <div class="pg" id="pg-massa">
-  <h2>⚡ Lançamento em Massa</h2>
+  <h2 data-label="h2-massa">⚡ Lançamento em Massa</h2>
   <div class="sub">Cole sua lista de uma vez · o sistema interpreta automaticamente</div>
 
   <!-- Tipo e cabeçalho -->
@@ -849,7 +853,7 @@ Batata frita 15 kg 6,00"
 
 <!-- ESTOQUE -->
 <div class="pg" id="pg-est">
-  <h2>📦 Estoque Central</h2>
+  <h2 data-label="h2-estoque">📦 Estoque Central</h2>
   <div class="sub">Todos os produtos · atualizado automaticamente pelas Entradas</div>
 
   <!-- Cards de resumo -->
@@ -897,13 +901,13 @@ Batata frita 15 kg 6,00"
       <table id="est-tabela" style="width:100%;border-collapse:collapse;min-width:600px">
         <thead>
           <tr style="background:#1a1a1a;position:sticky;top:0;z-index:2">
-            <th style="text-align:left;padding:10px 14px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Produto</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Categoria</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Un.</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Custo Unit.</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Qtd Estoque</th>
-            <th style="padding:10px 10px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Qtd Mínima</th>
-            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Valor Total</th>
+            <th style="text-align:left;padding:10px 14px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;white-space:nowrap"><span data-label="est-col-produto">Produto</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap"><span data-label="est-col-cat">Categoria</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap"><span data-label="est-col-un">Un.</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap"><span data-label="est-col-custo">Custo Unit.</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap"><span data-label="est-col-qtd">Qtd Estoque</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap"><span data-label="est-col-min">Qtd Mínima</span></th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap"><span data-label="est-col-valor">Valor Total</span></th>
             <th style="padding:10px 10px;font-size:11px;color:#555;text-align:center;white-space:nowrap">🗑</th>
           </tr>
         </thead>
@@ -917,7 +921,7 @@ Batata frita 15 kg 6,00"
 
 <!-- ENTRADAS -->
 <div class="pg" id="pg-ent">
-  <h2>Entradas de Mercadoria</h2><div class="sub">Compras de insumos · produtos novos aparecem automaticamente no Estoque</div>
+  <h2 data-label="h2-entradas">Entradas de Mercadoria</h2><div class="sub">Compras de insumos · produtos novos aparecem automaticamente no Estoque</div>
   <div class="fb">
     <h3>Registrar Compra</h3>
     <div class="fg">
@@ -952,7 +956,7 @@ Batata frita 15 kg 6,00"
 
 <!-- DISTRIBUIÇÃO -->
 <div class="pg" id="pg-dist">
-  <h2>🚚 Distribuição</h2>
+  <h2 data-label="h2-dist">🚚 Distribuição</h2>
   <div class="sub">Transfere produtos do Estoque e Produção para as lojas — dá baixa automática no estoque</div>
 
   <div class="dist-card" style="margin-bottom:20px">
@@ -1006,7 +1010,7 @@ Batata frita 15 kg 6,00"
 
 <!-- RELATÓRIO PRODUÇÃO -->
 <div class="pg" id="pg-relatorio">
-  <h2>📊 Relatório de Produção</h2>
+  <h2 data-label="h2-relatorio">📊 Relatório de Produção</h2>
   <div class="sub">Controle mensal e anual de entradas, saídas e distribuições do Estoque Central</div>
 
   <div class="fx" style="margin-bottom:20px;gap:10px;flex-wrap:wrap">
@@ -1023,7 +1027,7 @@ Batata frita 15 kg 6,00"
 
 <!-- RELATÓRIOS PDF -->
 <div class="pg" id="pg-pdf">
-  <h2>🖨️ Relatórios PDF</h2>
+  <h2 data-label="h2-pdf">🖨️ Relatórios PDF</h2>
   <div class="sub">Gere relatórios completos com logo, totais e resumo — filtrados por período</div>
 
   <!-- Filtros -->
@@ -1067,14 +1071,14 @@ Batata frita 15 kg 6,00"
 
 <!-- LOJAS -->
 <div class="pg" id="pg-loj">
-  <h2>Painel por Loja</h2><div class="sub">Desempenho individual de cada unidade</div>
+  <h2 data-label="h2-lojas">Painel por Loja</h2><div class="sub">Desempenho individual de cada unidade</div>
   <div class="tabs" id="tabs-lj"></div>
   <div id="lj-c"></div>
 </div>
 
 <!-- CONTAGEM & CMV -->
 <div class="pg" id="pg-cmv">
-  <h2>📊 Contagem &amp; CMV</h2>
+  <h2 data-label="h2-cmv">📊 Contagem &amp; CMV</h2>
   <div class="sub">Contagem rápida item a item · igual planilha · CMV automático</div>
 
   <div class="tabs" id="cmv-tabs">
@@ -1323,7 +1327,7 @@ Batata frita 20 kg 5,50"
 
 
 <div class="pg" id="pg-cfg">
-  <h2>⚙️ Personalizar</h2><div class="sub">Edite nomes, textos e cores</div>
+  <h2 data-label="h2-cfg">⚙️ Personalizar</h2><div class="sub">Edite nomes, textos e cores</div>
   <div class="cs"><div class="cst">🏠 Identidade</div><div class="cb">
     <div class="cr"><label>Nome/Logo</label><input type="text" id="cfg-lg" placeholder="🍔 SKINA GESTÃO" style="background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 11px;width:100%"></div>
     <div class="cr"><label>Tagline</label><input type="text" id="cfg-tg" placeholder="Sistema de Gestão"></div>
@@ -1391,6 +1395,37 @@ Batata frita 20 kg 5,50"
     <button class="btn bo" onclick="rstCfg()">↺ Restaurar Padrão</button>
   </div>
 
+  <!-- EDITOR DE LABELS -->
+  <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
+  <h2 style="font-size:20px;margin-bottom:4px">🏷️ Editar Todos os Textos do Sistema</h2>
+  <div class="sub">Altere qualquer legenda, título ou texto — salva automaticamente</div>
+
+  <div class="cs" style="margin-top:12px">
+    <div class="cst">✏️ Textos Rápidos — Clique e edite direto</div>
+    <div class="cb">
+      <div style="margin-bottom:12px;padding:10px 14px;background:rgba(212,168,67,.1);border-radius:8px;font-size:13px;color:var(--ac)">
+        💡 Edite qualquer campo abaixo. Salva automaticamente ao sair do campo.
+      </div>
+      <div id="labels-editor-grid"></div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn bg" onclick="svTodosLabels()">💾 Salvar Todos</button>
+        <button class="btn br sm" onclick="resetLabels()">↺ Restaurar Originais</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cs" style="margin-top:12px">
+    <div class="cst">🖱️ Modo Clique — Editar qualquer texto na tela</div>
+    <div class="cb">
+      <div style="font-size:13px;color:#aaa;margin-bottom:12px">Ativa um modo onde você clica em qualquer texto do sistema e edita na hora.</div>
+      <div class="fx" style="gap:12px;align-items:center">
+        <button id="btn-modo-admin" class="btn bg" onclick="toggleModoAdmin()" style="font-size:14px;padding:10px 24px">✏️ Ativar Modo Edição</button>
+        <span id="modo-admin-status" style="font-size:13px;color:#888">Desativado</span>
+      </div>
+    </div>
+  </div>
+
+
   <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
   <h2 style="font-size:20px;margin-bottom:4px">🔑 Senhas de Acesso</h2>
   <div class="sub">Altere as senhas do sistema</div>
@@ -1412,7 +1447,7 @@ Batata frita 20 kg 5,50"
 
 <!-- BACKUP -->
 <div class="pg" id="pg-bkp">
-  <h2>☁️ Dados &amp; Segurança</h2>
+  <h2 data-label="h2-backup">☁️ Dados &amp; Segurança</h2>
   <div class="sub">Firebase — sync em tempo real entre todos os dispositivos</div>
   <div class="cards" id="bkp-st"></div>
 
@@ -1638,7 +1673,7 @@ function P(id){
   if(id==='pdf'){pdfInit();}
   if(id==='loj'){const f=document.querySelector('#tabs-lj .tab');rLoja(gU()[0],f)}
   if(id==='cmv'){cmvInit();}
-  if(id==='cfg'){loadCfgForm();loadTabsForm();loadSavedImgs();}
+  if(id==='cfg'){loadCfgForm();loadTabsForm();loadSavedImgs();rLabelsEditor();}
   if(id==='bkp'){rBkp();fbAtualizarBanner();}
 }
 function tSb(){document.getElementById('sb').classList.toggle('op');document.getElementById('sbo').classList.toggle('op')}
@@ -1866,10 +1901,10 @@ function rEst(){
   const valorTotal = todos.reduce((s,p)=>s+(p.quantidade*p.custo),0);
   const resumo = document.getElementById('est-resumo-cards');
   if(resumo) resumo.innerHTML=`
-    <div class="c go"><div class="lb">Total Produtos</div><div class="vl">${todos.length}</div></div>
-    <div class="c bl"><div class="lb">Valor em Estoque</div><div class="vl" style="font-size:14px">${fm(valorTotal)}</div></div>
-    <div class="c ${criticos>0?'re':'gr'}"><div class="lb">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2">abaixo do mínimo</div></div>
-    <div class="c"><div class="lb">Exibindo</div><div class="vl">${prods.length}</div><div class="sb2">de ${todos.length}</div></div>`;
+    <div class="c go"><div class="lb" data-label="est-card-total">Total Produtos</div><div class="vl">${todos.length}</div></div>
+    <div class="c bl"><div class="lb" data-label="est-card-valor">Valor em Estoque</div><div class="vl" style="font-size:14px">${fm(valorTotal)}</div></div>
+    <div class="c ${criticos>0?'re':'gr'}"><div class="lb" data-label="est-card-critico">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2" data-label="est-card-critico-sub">abaixo do mínimo</div></div>
+    <div class="c"><div class="lb" data-label="est-card-exibindo">Exibindo</div><div class="vl">${prods.length}</div><div class="sb2">de ${todos.length}</div></div>`;
 
   const cnt = document.getElementById('est-count');
   if(cnt) cnt.textContent = `${prods.length} produto(s)`;
@@ -1946,6 +1981,8 @@ function rEst(){
     <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:var(--ac)">${fm(totVal)}</td>
     <td></td>
   </tr>`;
+  // Aplica labels customizadas nos cards e colunas
+  setTimeout(aplicarLabels, 10);
 }
 
 function estImprimirTabela(){
@@ -2814,6 +2851,222 @@ let _fbApp = null;
 let _fbDb  = null;
 let _fbUid = null; // chave isolada por usuário
 
+// ══════════════════════════════════════════════════
+// ── MODO ADMIN — EDIÇÃO DE QUALQUER TEXTO ──
+// ══════════════════════════════════════════════════
+
+let _modoAdmin = false;
+const LABELS_KEY = '_custom_labels';
+
+// Carrega labels salvas do localStorage
+function getLabels(){ try{ return JSON.parse(localStorage.getItem(LABELS_KEY)||'{}'); }catch(e){ return {}; } }
+function setLabel(key, val){ const l=getLabels(); l[key]=val; localStorage.setItem(LABELS_KEY,JSON.stringify(l)); }
+function resetLabels(){ if(!confirm('Restaurar todos os textos originais?')) return; localStorage.removeItem(LABELS_KEY); location.reload(); }
+
+// Aplica labels salvas ao carregar a página
+function aplicarLabels(){
+  const l = getLabels();
+  Object.entries(l).forEach(([key, val])=>{
+    document.querySelectorAll(`[data-label="${key}"]`).forEach(el=>{ el.textContent=val; });
+  });
+}
+
+// Ativa/desativa modo admin
+function toggleModoAdmin(){
+  _modoAdmin = !_modoAdmin;
+  document.body.classList.toggle('modo-admin', _modoAdmin);
+  const btn = document.getElementById('btn-modo-admin');
+  const st = document.getElementById('modo-admin-status');
+  if(btn) btn.textContent = _modoAdmin ? '⏹ Desativar Modo Edição' : '✏️ Ativar Modo Edição';
+  if(btn) btn.style.background = _modoAdmin ? 'var(--re)' : '';
+  if(st) st.textContent = _modoAdmin ? '✅ ATIVO — Clique em qualquer texto para editar' : 'Desativado';
+  if(st) st.style.color = _modoAdmin ? 'var(--gr)' : '#888';
+
+  if(_modoAdmin){
+    toast('✏️ Modo Edição ativado! Clique em qualquer texto.');
+    // Adiciona listener global de clique nos labels
+    document.addEventListener('click', adminClickHandler, true);
+  } else {
+    document.removeEventListener('click', adminClickHandler, true);
+    toast('✅ Modo Edição desativado. Textos salvos!');
+    rLabelsLista();
+  }
+}
+
+// Handler global de clique no modo admin
+function adminClickHandler(e){
+  if(!_modoAdmin) return;
+  const el = e.target.closest('[data-label]');
+  if(!el) return;
+  // Impede navegação/ação do elemento pai
+  e.stopPropagation();
+  e.preventDefault();
+  // Já está em edição?
+  if(el.contentEditable === 'true') return;
+  const key = el.getAttribute('data-label');
+  const original = el.textContent;
+  el.contentEditable = 'true';
+  el.style.outline = '2px solid #d4a843';
+  el.style.padding = '2px 6px';
+  el.style.borderRadius = '4px';
+  el.style.background = 'rgba(212,168,67,.15)';
+  el.focus();
+  // Seleciona tudo
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  function salvar(){
+    const novo = el.textContent.trim();
+    el.contentEditable = 'false';
+    el.style.outline = '';
+    el.style.padding = '';
+    el.style.background = '';
+    if(novo && novo !== original){
+      setLabel(key, novo);
+      // Aplica em todos os elementos com mesma label
+      document.querySelectorAll(`[data-label="${key}"]`).forEach(x=>{ x.textContent=novo; });
+      toast(`✅ "${novo}" salvo!`);
+    }
+    el.removeEventListener('blur', salvar);
+    el.removeEventListener('keydown', onKey);
+  }
+  function onKey(ev){
+    if(ev.key==='Enter'){ ev.preventDefault(); salvar(); }
+    if(ev.key==='Escape'){ el.textContent=original; el.contentEditable='false'; el.removeEventListener('blur',salvar); }
+  }
+  el.addEventListener('blur', salvar);
+  el.addEventListener('keydown', onKey);
+}
+
+// Lista os labels personalizados na aba Personalizar
+// ── MAPA COMPLETO DE LABELS DO SISTEMA ──
+const LABELS_MAP = {
+  // NAVEGAÇÃO
+  'nav-estoque':   {sec:'🧭 Menu',  label:'Menu: Estoque Central',      def:'Estoque'},
+  'nav-entradas':  {sec:'🧭 Menu',  label:'Menu: Entradas',              def:'Entradas'},
+  'nav-dist':      {sec:'🧭 Menu',  label:'Menu: Distribuição',          def:'Distribuição'},
+  'nav-relatorio': {sec:'🧭 Menu',  label:'Menu: Relatório Produção',    def:'Relatório Produção'},
+  'nav-pdf':       {sec:'🧭 Menu',  label:'Menu: Relatórios PDF',        def:'Relatórios PDF'},
+  // DASHBOARD
+  'h2-dashboard':  {sec:'📊 Dashboard', label:'Título: Dashboard',       def:'Dashboard Geral'},
+  // CARDS DINÂMICOS (via JS)
+  'card-receita-mes':  {sec:'📊 Dashboard', label:'Card: Receita do Mês',    def:'Receita do Mês'},
+  'card-despesa-mes':  {sec:'📊 Dashboard', label:'Card: Despesas do Mês',   def:'Despesas do Mês'},
+  'card-resultado':    {sec:'📊 Dashboard', label:'Card: Resultado',          def:'Resultado'},
+  'card-boletos':      {sec:'📊 Dashboard', label:'Card: Boletos (7d)',       def:'Boletos (7d)'},
+  'card-est-critico':  {sec:'📊 Dashboard', label:'Card: Estoque Crítico',    def:'Estoque Crítico'},
+  'card-itens-est':    {sec:'📊 Dashboard', label:'Card: Itens Estoque',      def:'Itens Estoque'},
+  // ESTOQUE
+  'h2-estoque':        {sec:'📦 Estoque',   label:'Título: Estoque Central',  def:'📦 Estoque Central'},
+  'est-col-produto':   {sec:'📦 Estoque',   label:'Coluna: Produto',          def:'Produto'},
+  'est-col-cat':       {sec:'📦 Estoque',   label:'Coluna: Categoria',        def:'Categoria'},
+  'est-col-un':        {sec:'📦 Estoque',   label:'Coluna: Unidade',          def:'Un.'},
+  'est-col-custo':     {sec:'📦 Estoque',   label:'Coluna: Custo Unit.',      def:'Custo Unit.'},
+  'est-col-qtd':       {sec:'📦 Estoque',   label:'Coluna: Qtd Estoque',      def:'Qtd Estoque'},
+  'est-col-min':       {sec:'📦 Estoque',   label:'Coluna: Qtd Mínima',       def:'Qtd Mínima'},
+  'est-col-valor':     {sec:'📦 Estoque',   label:'Coluna: Valor Total',      def:'Valor Total'},
+  'est-card-total':    {sec:'📦 Estoque',   label:'Card: Total Produtos',     def:'Total Produtos'},
+  'est-card-valor':    {sec:'📦 Estoque',   label:'Card: Valor em Estoque',   def:'Valor em Estoque'},
+  'est-card-critico':  {sec:'📦 Estoque',   label:'Card: Crítico',            def:'⚠️ Crítico'},
+  // RECEITAS
+  'h2-receitas':       {sec:'💰 Receitas',  label:'Título: Receitas',         def:'Receitas'},
+  // DESPESAS
+  'h2-despesas':       {sec:'💸 Despesas',  label:'Título: Despesas',         def:'Despesas'},
+  // FICHAS
+  'h2-fichas':         {sec:'📋 Fichas',    label:'Título: Fichas Técnicas',  def:'Fichas Técnicas'},
+  // MASSA
+  'h2-massa':          {sec:'⚡ Em Massa',  label:'Título: Lançamento em Massa', def:'⚡ Lançamento em Massa'},
+  // ANÁLISE
+  'h2-analise':        {sec:'📅 Análise',   label:'Título: Análise',          def:'📅 Análise Mensal & Anual'},
+  'h2-alertas':        {sec:'🔔 Alertas',   label:'Título: Alertas',          def:'Central de Alertas'},
+  'h2-dre':            {sec:'📑 DRE',       label:'Título: DRE',              def:'DRE — Demonstrativo'},
+  'h2-fluxo':          {sec:'💹 Fluxo',     label:'Título: Fluxo de Caixa',   def:'Fluxo de Caixa'},
+};
+
+function rLabelsEditor(){
+  const saved = getLabels();
+  const grid = document.getElementById('labels-editor-grid');
+  if(!grid) return;
+
+  // Agrupa por seção
+  const secs = {};
+  Object.entries(LABELS_MAP).forEach(([key,info])=>{
+    if(!secs[info.sec]) secs[info.sec]=[];
+    secs[info.sec].push({key, ...info});
+  });
+
+  grid.innerHTML = Object.entries(secs).map(([sec, items])=>`
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;color:#d4a843;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #333">${sec}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${items.map(item=>{
+          const cur = saved[item.key] || item.def;
+          return `<div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+            <div style="font-size:10px;color:#888;margin-bottom:4px">${item.label}</div>
+            <input type="text" 
+              id="lbl-inp-${item.key}"
+              value="${cur.replace(/"/g,'&quot;')}"
+              placeholder="${item.def}"
+              onchange="salvarLabel('${item.key}',this.value)"
+              style="background:transparent;border:none;border-bottom:1px solid #444;color:#fff;font-size:13px;width:100%;outline:none;padding:2px 0"
+              onfocus="this.style.borderBottomColor='#d4a843'"
+              onblur="this.style.borderBottomColor='#444'">
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function salvarLabel(key, val){
+  const l = getLabels();
+  if(val.trim() === LABELS_MAP[key]?.def) { delete l[key]; }
+  else { l[key] = val; }
+  localStorage.setItem(LABELS_KEY, JSON.stringify(l));
+  // Aplica na tela imediatamente
+  document.querySelectorAll(`[data-label="${key}"]`).forEach(el=>{ el.textContent=val; });
+  // Atualiza cards dinâmicos
+  aplicarLabelsCards();
+  toast('✅ Texto salvo!');
+}
+
+function svTodosLabels(){
+  document.querySelectorAll('[id^="lbl-inp-"]').forEach(inp=>{
+    const key = inp.id.replace('lbl-inp-','');
+    salvarLabel(key, inp.value);
+  });
+  toast('✅ Todos os textos salvos!');
+}
+
+// Aplica labels nos cards dinâmicos (gerados por JS)
+function aplicarLabelsCards(){
+  const l = getLabels();
+  const get = key => l[key] || LABELS_MAP[key]?.def || key;
+  // Cards do dashboard
+  const cards = document.getElementById('ds-cards');
+  if(cards){
+    cards.querySelectorAll('.c .lb').forEach(lb=>{
+      const txt = lb.textContent.trim();
+      // Mapeia pelo texto atual para o label correto
+    });
+  }
+}
+
+function rLabelsLista(){
+  rLabelsEditor();
+}
+
+function deletarLabel(key){
+  const l=getLabels(); delete l[key]; localStorage.setItem(LABELS_KEY,JSON.stringify(l));
+  rLabelsLista();
+  aplicarLabels();
+  toast('Texto restaurado ao original.');
+}
+
+
+
 function fbInit(){
   if(!FIREBASE_CFG) return;
   try{
@@ -3262,7 +3515,8 @@ function entrarNoSistema(nivel){
   if(at)at.textContent=nivel==='master'?'Master (Acesso Total)':'Visualização (Somente Leitura)';
   // Init normal
   aplCfg();applyLogo();popYears();popProds();popRelYears();
-  fbInit(); // 🔥 inicia Firebase se configurado
+  fbInit();
+  aplicarLabels(); // aplica textos personalizados
   const dt=td();
   ['r-dt','d-dt','b-vc','en-dt','tf-dt'].forEach(id=>sv(id,dt));
   rDash();bdg();
