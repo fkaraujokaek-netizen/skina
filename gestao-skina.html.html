@@ -65,6 +65,12 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#1a1a18;letter-spaci
 .th{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #333333;flex-wrap:wrap;gap:8px;background:#222222}
 .th h3{font-size:14px;font-weight:600;color:#d4a843}
 .ts{overflow-x:auto}
+/* Edição inline universal */
+.ts td input, .ts td select{background:transparent;border:none;border-bottom:1px solid transparent;color:inherit;font:inherit;outline:none;padding:1px 2px;transition:border-color .15s;width:100%}
+.ts td input:focus, .ts td select:focus{border-bottom-color:#d4a843!important;background:rgba(212,168,67,.05)}
+.ts td input[type=number]{text-align:right}
+.ts td select{-webkit-appearance:none;cursor:pointer;background:transparent}
+.ts tr:hover td input, .ts tr:hover td select{border-bottom-color:rgba(212,168,67,.3)}
 table{width:100%;border-collapse:collapse;min-width:480px}
 thead tr{background:#222222}
 th{text-align:left;padding:9px 13px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#d4a843;font-weight:700;white-space:nowrap;border-bottom:1px solid #333333}
@@ -700,6 +706,7 @@ select option{background:#222222;color:#ffffff}
         <label>Tipo de Lançamento</label>
         <select id="massa-tipo" onchange="massaTipoChange()" style="font-size:14px;font-weight:600">
           <option value="entrada">🛒 Entrada de Mercadoria</option>
+          <option value="estoque">📦 Atualização de Estoque</option>
           <option value="distribuicao">🚚 Distribuição para Loja</option>
           <option value="saida">📤 Saída / Transferência</option>
           <option value="contagem">📊 Contagem de Estoque</option>
@@ -830,6 +837,7 @@ Batata frita 15 kg 6,00"
       <select id="massa-fil-tipo" onchange="rMassaHist()" style="font-size:12px;padding:5px 10px;border-radius:7px;border:1px solid #d4a843;background:#222;color:#fff">
         <option value="all">Todos</option>
         <option value="entrada">Entradas</option>
+        <option value="estoque">Estoque</option>
         <option value="distribuicao">Distribuições</option>
         <option value="saida">Saídas</option>
         <option value="contagem">Contagens</option>
@@ -842,7 +850,7 @@ Batata frita 15 kg 6,00"
 <!-- ESTOQUE -->
 <div class="pg" id="pg-est">
   <h2>📦 Estoque Central</h2>
-  <div class="sub">Visão completa por categoria · Integrado com Entradas e Distribuições em tempo real</div>
+  <div class="sub">Todos os produtos · atualizado automaticamente pelas Entradas</div>
 
   <!-- Cards de resumo -->
   <div class="cards" id="est-resumo-cards" style="margin-bottom:16px"></div>
@@ -851,32 +859,59 @@ Batata frita 15 kg 6,00"
   <div class="fx" style="margin-bottom:14px;gap:10px;flex-wrap:wrap">
     <input type="text" id="est-busca" placeholder="🔍 Buscar produto..." oninput="rEst()"
       style="flex:1;min-width:180px;background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
-    <select id="est-mes-ref" onchange="rEst()" style="background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
+    <select id="est-cat-fil" onchange="rEst()" style="background:#222;border:1px solid #444;color:#fff;border-radius:7px;padding:8px 12px;font-size:13px">
+      <option value="all">Todas as categorias</option>
+      <option>Pães</option><option>Carnes/Proteínas</option><option>Queijos</option>
+      <option>Molhos/Condimentos</option><option>Vegetais</option><option>Embalagens</option>
+      <option>Bebidas</option><option>Batatas</option><option>Ingredientes</option>
+      <option>Limpeza</option><option>Produtos Secos</option><option>Resfriados</option><option>Outros</option>
     </select>
     <button class="btn bgr sm" onclick="estSyncEntradas()">🔄 Sincronizar</button>
     <button class="btn bg sm" onclick="estImprimirTabela()">🖨️ Imprimir</button>
-    <button class="btn bo sm" onclick="estToggleCadastro()" id="btn-cadastro-toggle">⚙️ Ajuste</button>
+    <button class="btn bo sm" onclick="estToggleCadastro()">⚙️ Novo Produto</button>
   </div>
 
-  <!-- Formulário de ajuste manual (colapsado) -->
+  <!-- Formulário de novo produto (colapsado) -->
   <div id="est-cadastro-wrap" style="display:none;margin-bottom:16px">
     <div class="fb">
-      <h3>⚙️ Ajuste Manual</h3>
-      <div style="font-size:12px;color:#888;margin-bottom:12px">Corrija quantidades ou defina mínimos. Os produtos aparecem automaticamente pelas Entradas.</div>
+      <h3>➕ Novo Produto Manual</h3>
       <div class="fg">
         <div class="g"><label>Nome</label><input type="text" id="e-nm" placeholder="Ex: Pão Brioche 100un"></div>
         <div class="g"><label>Categoria</label><select id="e-cat"><option>Pães</option><option>Carnes/Proteínas</option><option>Queijos</option><option>Molhos/Condimentos</option><option>Vegetais</option><option>Embalagens</option><option>Bebidas</option><option>Batatas</option><option>Ingredientes</option><option>Limpeza</option><option>Produtos Secos</option><option>Resfriados</option><option>Outros</option></select></div>
-        <div class="g"><label>Medida</label><select id="e-un"><option>un</option><option>kg</option><option>g</option><option>L</option><option>ml</option><option>cx</option><option>pct</option></select></div>
-        <div class="g"><label>Qtd Atual</label><input type="number" id="e-qt" placeholder="0" min="0" step="0.01"></div>
-        <div class="g"><label>Qtd Mínima (alerta)</label><input type="number" id="e-mn" placeholder="0" min="0" step="0.01"></div>
+        <div class="g"><label>Unidade</label><select id="e-un"><option>un</option><option>kg</option><option>g</option><option>L</option><option>ml</option><option>cx</option><option>pct</option></select></div>
+        <div class="g"><label>Qtd Inicial</label><input type="number" id="e-qt" placeholder="0" min="0" step="0.01"></div>
+        <div class="g"><label>Qtd Mínima</label><input type="number" id="e-mn" placeholder="0" min="0" step="0.01"></div>
         <div class="g"><label>Custo Unit. (R$)</label><input type="number" id="e-cs" placeholder="0,00" min="0" step="0.01"></div>
       </div>
       <button class="btn bg" onclick="addE()">+ Salvar</button>
     </div>
   </div>
 
-  <!-- Tabela por categoria -->
-  <div id="est-tabela-wrap"></div>
+  <!-- Tabela estilo Excel -->
+  <div class="tw">
+    <div class="th fxb">
+      <h3>📋 Lista de Produtos</h3>
+      <span id="est-count" style="font-size:12px;color:#888"></span>
+    </div>
+    <div class="ts">
+      <table id="est-tabela" style="width:100%;border-collapse:collapse;min-width:600px">
+        <thead>
+          <tr style="background:#1a1a1a;position:sticky;top:0;z-index:2">
+            <th style="text-align:left;padding:10px 14px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Produto</th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Categoria</th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center;white-space:nowrap">Un.</th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Custo Unit.</th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Qtd Estoque</th>
+            <th style="padding:10px 10px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Qtd Mínima</th>
+            <th style="padding:10px 10px;font-size:11px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:right;white-space:nowrap">Valor Total</th>
+            <th style="padding:10px 10px;font-size:11px;color:#555;text-align:center;white-space:nowrap">🗑</th>
+          </tr>
+        </thead>
+        <tbody id="est-tbody"></tbody>
+        <tfoot id="est-tfoot"></tfoot>
+      </table>
+    </div>
+  </div>
 </div>
 
 
@@ -1622,9 +1657,55 @@ function delIt(k,id,cb){if(!confirm('Excluir?'))return;DB.set(k,DB.get(k).filter
 function toast(m){let t=document.getElementById('_t');if(!t){t=document.createElement('div');t.id='_t';t.style.cssText='position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#d4a843;color:#000;padding:9px 20px;border-radius:7px;font-weight:700;font-size:13px;z-index:9999;transition:.3s';document.body.appendChild(t)}t.textContent=m;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,2200)}
 
 // ── RECEITAS ──
+// ══════════════════════════════════════════════════
+// ── EDIÇÃO INLINE UNIVERSAL ──
+// Salva qualquer campo de qualquer tabela direto na célula
+// ══════════════════════════════════════════════════
+function ed(tabela, id, campo, valor, tipo='text', opts=null){
+  const l=DB.get(tabela);
+  const item=l.find(x=>x.id===id);
+  if(!item) return;
+  item[campo] = tipo==='number' ? (parseFloat(valor)||0) : valor;
+  DB.set(tabela,l);
+  if(tabela==='receitas'||tabela==='despesas') bdg();
+  if(tabela==='estoque') popProds();
+}
+
+// Gera input editável inline
+function ei(tabela, id, campo, valor, tipo='text', opts=null, style=''){
+  const base = `background:transparent;border:none;border-bottom:1px solid transparent;color:inherit;font-size:inherit;font-weight:inherit;outline:none;width:100%;${style}`;
+  const save = `ed('${tabela}','${id}','${campo}',${tipo==='number'?'parseFloat(this.value)||0':`this.value`},'${tipo}')`;
+  const focus = `this.style.borderBottomColor='#d4a843'`;
+  const blur = `this.style.borderBottomColor='transparent'`;
+  if(opts){
+    const optHtml = opts.map(o=>`<option value="${o}"${o===valor?' selected':''}>${o}</option>`).join('');
+    return `<select onchange="${save}" style="${base};background:#0000;-webkit-appearance:none;cursor:pointer" onfocus="${focus}" onblur="${blur}">${optHtml}</select>`;
+  }
+  return `<input type="${tipo}" value="${String(valor||'').replace(/"/g,'&quot;')}" onchange="${save}" style="${base};min-width:40px" onfocus="${focus}" onblur="${blur}">`;
+}
+
+// ── RECEITAS ──
 function addR(){const d=gv('r-dt'),u=gv('r-un'),c=gv('r-cat'),v=parseFloat(gv('r-vl')),dc=gv('r-dc');if(!d||!v||v<=0)return alert('Preencha data e valor!');const l=DB.get('receitas');l.push({id:uid(),data:d,unidade:u,categoria:c,valor:v,descricao:dc});DB.set('receitas',l);sv('r-vl','');sv('r-dc','');rR();bdg()}
 function fR(f,el){document.querySelectorAll('#tabs-r .tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');rR(f)}
-function rR(f='all'){let l=DB.get('receitas');if(f!=='all')l=l.filter(r=>r.unidade===f);l.sort((a,b)=>b.data.localeCompare(a.data));const tot=l.reduce((s,r)=>s+r.valor,0);const te=document.getElementById('r-tot');if(te)te.textContent='Total: '+fm(tot);const tb=document.getElementById('tb-r');if(!l.length){tb.innerHTML='<tr><td colspan="6" class="empty">Nenhuma receita cadastrada. Adicione sua primeira receita acima!</td></tr>';return}tb.innerHTML=l.map(r=>`<tr><td>${fd(r.data)}</td><td>${chip(r.unidade)}</td><td>${r.categoria}</td><td>${r.descricao||'—'}</td><td style="color:var(--gr);font-weight:600">${fm(r.valor)}</td><td><button class="btn br sm" onclick="delIt('receitas','${r.id}',rR)">🗑</button></td></tr>`).join('')}
+function rR(f='all'){
+  let l=DB.get('receitas');
+  if(f!=='all') l=l.filter(r=>r.unidade===f);
+  l.sort((a,b)=>b.data.localeCompare(a.data));
+  const tot=l.reduce((s,r)=>s+r.valor,0);
+  const te=document.getElementById('r-tot');if(te)te.textContent='Total: '+fm(tot);
+  const tb=document.getElementById('tb-r');
+  if(!l.length){tb.innerHTML='<tr><td colspan="6" class="empty">Nenhuma receita. Adicione acima!</td></tr>';return}
+  const uns=gU();
+  const cats=['Vendas Balcão','Delivery','iFood','Evento','Outros'];
+  tb.innerHTML=l.map(r=>`<tr>
+    <td style="min-width:110px">${ei('receitas',r.id,'data',r.data,'date')}</td>
+    <td style="min-width:100px">${ei('receitas',r.id,'unidade',r.unidade,'text',uns)}</td>
+    <td style="min-width:120px">${ei('receitas',r.id,'categoria',r.categoria,'text',cats)}</td>
+    <td style="min-width:140px">${ei('receitas',r.id,'descricao',r.descricao||'','text')}</td>
+    <td style="min-width:90px;color:var(--gr);font-weight:600">${ei('receitas',r.id,'valor',r.valor,'number','','color:var(--gr);font-weight:700;text-align:right;width:80px')}</td>
+    <td><button class="btn br sm" onclick="delIt('receitas','${r.id}',rR)">🗑</button></td>
+  </tr>`).join('');
+}
 
 // ── DESPESAS ──
 function dTogglePgDate(v){
@@ -1664,23 +1745,25 @@ function rD(f='all'){
   const tot=l.reduce((s,d)=>s+d.valor,0);
   const te=document.getElementById('d-tot');if(te)te.textContent='Total: '+fm(tot);
   const tb=document.getElementById('tb-d');
-  if(!l.length){tb.innerHTML='<tr><td colspan="10" class="empty">Nenhuma despesa cadastrada.</td></tr>';return}
+  if(!l.length){tb.innerHTML='<tr><td colspan="10" class="empty">Nenhuma despesa.</td></tr>';return}
+  const uns=gU();
+  const cats=['Aluguel','Folha','Fornecedores','Marketing','Manutenção','Utilities','Impostos','Outros'];
   tb.innerHTML=l.map(d=>{
     const dias=d.vencimento?dD(d.vencimento):null;
     let stLabel='',stCls='';
     if(d.statusPg==='pago'){stLabel='✅ Pago';stCls='ok';}
-    else if(dias!==null&&dias<0){stLabel='❌ Vencido '+Math.abs(dias)+'d';stCls='dg';}
+    else if(dias!==null&&dias<0){stLabel='❌ Vencido';stCls='dg';}
     else if(dias!==null&&dias<=7){stLabel='⚠️ '+dias+'d';stCls='wn';}
-    else if(d.vencimento){stLabel='🔴 Pendente';stCls='pg';}
+    else if(d.vencimento){stLabel='Pendente';stCls='pg';}
     else{stLabel='—';stCls='';}
     return`<tr>
-      <td>${fd(d.data)}</td>
-      <td>${chip(d.unidade)}</td>
-      <td><span class="bs ${d.tipo==='Fixo'?'ok':'wn'}">${d.tipo}</span></td>
-      <td>${d.categoria}</td>
-      <td>${d.descricao||'—'}</td>
-      <td style="color:${dias!==null&&dias<=7&&d.statusPg!=='pago'?'var(--re)':'var(--mu)'}">${d.vencimento?fd(d.vencimento):'—'}</td>
-      <td style="color:var(--re);font-weight:600">${fm(d.valor)}</td>
+      <td style="min-width:110px">${ei('despesas',d.id,'data',d.data,'date')}</td>
+      <td style="min-width:90px">${ei('despesas',d.id,'unidade',d.unidade,'text',uns)}</td>
+      <td style="min-width:80px">${ei('despesas',d.id,'tipo',d.tipo,'text',['Fixo','Variável'])}</td>
+      <td style="min-width:110px">${ei('despesas',d.id,'categoria',d.categoria,'text',cats)}</td>
+      <td style="min-width:140px">${ei('despesas',d.id,'descricao',d.descricao||'','text')}</td>
+      <td style="min-width:110px">${ei('despesas',d.id,'vencimento',d.vencimento||'','date')}</td>
+      <td style="min-width:80px;color:var(--re);font-weight:600">${ei('despesas',d.id,'valor',d.valor,'number','','color:var(--re);font-weight:700;text-align:right;width:75px')}</td>
       <td>${stCls?`<span class="bs ${stCls}">${stLabel}</span>`:stLabel}</td>
       <td style="color:var(--gr)">${d.dataPg?fd(d.dataPg):'—'}</td>
       <td class="fx" style="gap:4px">
@@ -1768,269 +1851,161 @@ function addE(){
   toast('✅ Produto cadastrado!'); rEst(); popProds();
 }
 
-function estPopMesRef(){
-  const sel = document.getElementById('est-mes-ref');
-  if(!sel) return;
-  const now = new Date();
-  let opts = '';
-  for(let i=0; i<6; i++){
-    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
-    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    const lbl = `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-    opts += `<option value="${val}"${i===0?' selected':''}>${lbl}</option>`;
-  }
-  sel.innerHTML = opts;
-}
-
 function rEst(){
-  estPopMesRef();
-  const busca = gv('est-busca').toLowerCase();
-  const mesRef = gv('est-mes-ref') || (() => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; })();
-
-  // Primeiro dia do mês selecionado
-  const [anoRef, mmRef] = mesRef.split('-');
-  const primeiroDia = `${anoRef}-${mmRef}-01`;
-  const ultimoDia = `${anoRef}-${mmRef}-31`;
-
   let prods = DB.get('estoque');
+  const busca = gv('est-busca').toLowerCase();
+  const catFil = gv('est-cat-fil');
+
   if(busca) prods = prods.filter(p=>p.nome.toLowerCase().includes(busca));
+  if(catFil && catFil!=='all') prods = prods.filter(p=>p.categoria===catFil);
   prods.sort((a,b)=>a.nome.localeCompare(b.nome));
 
-  // Calcula movimentações do mês por produto
-  const entradas = DB.get('entradas')||[];
-  const dists = DB.get('distribuicoes')||[];
-
-  // Mapa de movimentações do mês atual
-  const mov = {};
-  prods.forEach(p=>{ mov[p.id]={iniMes:0, entrou:0, saiu:0, lojas:{}}; });
-
-  // Entradas do mês
-  entradas.filter(e=>e.data>=primeiroDia&&e.data<=ultimoDia).forEach(e=>{
-    if(mov[e.produtoId]) mov[e.produtoId].entrou += parseFloat(e.quantidade)||0;
-  });
-
-  // Saídas (distribuições) do mês — por loja
-  dists.filter(d=>d.data>=primeiroDia&&d.data<=ultimoDia).forEach(d=>{
-    (d.itens||[]).forEach(i=>{
-      if(mov[i.prodId]){
-        const qtd = parseFloat(i.quantidade)||0;
-        mov[i.prodId].saiu += qtd;
-        const loja = d.destino||'—';
-        if(!mov[i.prodId].lojas[loja]) mov[i.prodId].lojas[loja]=0;
-        mov[i.prodId].lojas[loja] += qtd;
-      }
-    });
-  });
-
-  // Estoque inicial = atual - entradas + saídas do mês
-  prods.forEach(p=>{
-    const m = mov[p.id]||{entrou:0,saiu:0};
-    m.iniMes = Math.max(0, (p.quantidade||0) - m.entrou + m.saiu);
-    mov[p.id] = m;
-  });
-
   // Cards resumo
+  const todos = DB.get('estoque');
+  const criticos = todos.filter(p=>p.minimo>0&&p.quantidade<=p.minimo).length;
+  const valorTotal = todos.reduce((s,p)=>s+(p.quantidade*p.custo),0);
   const resumo = document.getElementById('est-resumo-cards');
-  if(resumo){
-    const criticos = prods.filter(p=>p.minimo>0&&p.quantidade<=p.minimo).length;
-    const valorTotal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
-    const totalEntrou = Object.values(mov).reduce((s,m)=>s+m.entrou,0);
-    const totalSaiu = Object.values(mov).reduce((s,m)=>s+m.saiu,0);
-    resumo.innerHTML=`
-      <div class="c go"><div class="lb">Total Produtos</div><div class="vl">${prods.length}</div></div>
-      <div class="c bl"><div class="lb">Valor em Estoque</div><div class="vl" style="font-size:15px">${fm(valorTotal)}</div></div>
-      <div class="c gr"><div class="lb">Entrou no Mês</div><div class="vl" style="font-size:15px">${fn(totalEntrou)}</div><div class="sb2">unidades</div></div>
-      <div class="c or"><div class="lb">Saiu no Mês</div><div class="vl" style="font-size:15px">${fn(totalSaiu)}</div><div class="sb2">unidades</div></div>
-      <div class="c ${criticos>0?'re':''}"><div class="lb">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2">abaixo do mínimo</div></div>`;
-  }
+  if(resumo) resumo.innerHTML=`
+    <div class="c go"><div class="lb">Total Produtos</div><div class="vl">${todos.length}</div></div>
+    <div class="c bl"><div class="lb">Valor em Estoque</div><div class="vl" style="font-size:14px">${fm(valorTotal)}</div></div>
+    <div class="c ${criticos>0?'re':'gr'}"><div class="lb">⚠️ Crítico</div><div class="vl">${criticos}</div><div class="sb2">abaixo do mínimo</div></div>
+    <div class="c"><div class="lb">Exibindo</div><div class="vl">${prods.length}</div><div class="sb2">de ${todos.length}</div></div>`;
 
-  // Agrupa por categoria
-  const cats = {};
-  prods.forEach(p=>{
-    const cat = p.categoria||'Outros';
-    if(!cats[cat]) cats[cat]=[];
-    cats[cat].push(p);
-  });
+  const cnt = document.getElementById('est-count');
+  if(cnt) cnt.textContent = `${prods.length} produto(s)`;
 
-  const wrap = document.getElementById('est-tabela-wrap');
-  if(!wrap) return;
+  const tbody = document.getElementById('est-tbody');
+  const tfoot = document.getElementById('est-tfoot');
+  if(!tbody) return;
 
   if(!prods.length){
-    wrap.innerHTML=`<div style="text-align:center;padding:40px;color:#888">
-      <div style="font-size:44px;margin-bottom:12px">📦</div>
-      <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:#fff">Estoque vazio</div>
-      <div style="font-size:13px;margin-bottom:16px">Registre Entradas ou clique em Sincronizar para carregar os produtos.</div>
-      <button class="btn bgr" onclick="estSyncEntradas()" style="font-size:14px;padding:10px 20px">🔄 Sincronizar com Entradas</button>
-    </div>`;
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#888">
+      <div style="font-size:36px;margin-bottom:10px">📦</div>
+      <div style="font-weight:600;color:#fff;margin-bottom:8px">Estoque vazio</div>
+      <div style="font-size:13px;margin-bottom:14px">Registre entradas ou clique em Sincronizar</div>
+      <button class="btn bgr" onclick="estSyncEntradas()">🔄 Sincronizar com Entradas</button>
+    </td></tr>`;
+    if(tfoot) tfoot.innerHTML='';
     return;
   }
 
-  const iconeCat = {
-    'Pães':'🍞','Carnes/Proteínas':'🥩','Queijos':'🧀','Molhos/Condimentos':'🫙',
-    'Vegetais':'🥦','Embalagens':'📦','Bebidas':'🥤','Batatas':'🥔',
-    'Ingredientes':'🧂','Limpeza':'🧹','Produtos Secos':'🌾','Resfriados':'❄️','Outros':'📋'
-  };
-
-  wrap.innerHTML = Object.entries(cats).map(([cat, itens])=>{
-    const totIni = itens.reduce((s,p)=>s+(mov[p.id]?.iniMes||0),0);
-    const totEnt = itens.reduce((s,p)=>s+(mov[p.id]?.entrou||0),0);
-    const totSai = itens.reduce((s,p)=>s+(mov[p.id]?.saiu||0),0);
-    const totAtual = itens.reduce((s,p)=>s+(p.quantidade||0),0);
-    const totValor = itens.reduce((s,p)=>s+(p.quantidade*p.custo),0);
-    const icone = iconeCat[cat]||'📋';
-
-    const rows = itens.map(p=>{
-      const m = mov[p.id]||{iniMes:0,entrou:0,saiu:0,lojas:{}};
-      const critico = p.minimo>0&&p.quantidade<=p.minimo;
-      const corQtd = critico?'var(--re)':p.quantidade>0?'var(--gr)':'var(--mu)';
-      const lojasTxt = m.saiu>0 ? Object.entries(m.lojas||{}).map(([lj,qt])=>`<span style="font-size:10px;background:rgba(212,168,67,.12);color:#d4a843;padding:1px 5px;border-radius:4px;display:inline-block;margin:1px">${lj}: ${fn(qt)}</span>`).join('') : '—';
-      return `<tr style="${critico?'background:rgba(231,76,60,0.05)':''}">
-        <td style="padding:9px 13px;font-size:13px;font-weight:600;color:#fff">
-          ${p.nome}
-          ${critico?'<span style="font-size:9px;background:rgba(231,76,60,.2);color:var(--re);padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:700">⚠️ CRÍTICO</span>':''}
-        </td>
-        <td style="padding:9px 8px;text-align:center;color:#aaa;font-size:12px">${p.unidade}</td>
-        <td style="padding:9px 8px;text-align:center;color:#888;font-size:13px">${fn(m.iniMes)}</td>
-        <td style="padding:9px 8px;text-align:center;color:var(--gr);font-size:13px;font-weight:600">${m.entrou>0?'+'+fn(m.entrou):'—'}</td>
-        <td style="padding:9px 8px;text-align:center;color:var(--re);font-size:13px;font-weight:600">${m.saiu>0?'-'+fn(m.saiu):'—'}</td>
-        <td style="padding:9px 8px;font-size:11px;color:#aaa">${lojasTxt}</td>
-        <td style="padding:9px 8px;text-align:center;font-size:15px;font-weight:800;color:${corQtd}">${fn(p.quantidade)}</td>
-        <td style="padding:9px 8px;text-align:center;color:var(--ac);font-size:12px">${fm(p.quantidade*p.custo)}</td>
-        <td style="padding:9px 8px;text-align:center">
-          <button class="btn bo sm" onclick="ajE('${p.id}')" style="padding:3px 8px;font-size:11px">±</button>
-        </td>
-      </tr>`;
-    }).join('');
-
-    return `<div class="tw" style="margin-bottom:16px">
-      <div class="th fxb" style="background:linear-gradient(135deg,#222,#2a2a2a)">
-        <h3 style="font-size:14px">${icone} ${cat} <span style="font-size:11px;color:#888;font-weight:400;margin-left:6px">${itens.length} produto(s)</span></h3>
-        <div style="font-size:12px;color:var(--ac);font-weight:600">${fm(totValor)}</div>
-      </div>
-      <div class="ts">
-        <table style="width:100%;border-collapse:collapse">
-          <thead>
-            <tr style="background:#1a1a1a">
-              <th style="text-align:left;padding:8px 13px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px">Produto</th>
-              <th style="padding:8px 8px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center">Un.</th>
-              <th style="padding:8px 8px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:center">Início Mês</th>
-              <th style="padding:8px 8px;font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:1px;text-align:center">Entrou</th>
-              <th style="padding:8px 8px;font-size:10px;color:var(--re);text-transform:uppercase;letter-spacing:1px;text-align:center">Saiu</th>
-              <th style="padding:8px 8px;font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px">Destino (loja)</th>
-              <th style="padding:8px 8px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px;text-align:center">Atual</th>
-              <th style="padding:8px 8px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;text-align:center">Valor</th>
-              <th style="padding:8px 8px;font-size:10px;color:#555;text-align:center">⚙️</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows}
-            <tr style="background:#222;border-top:2px solid #d4a843">
-              <td style="padding:8px 13px;font-weight:700;color:#d4a843;font-size:12px">TOTAL ${cat.toUpperCase()}</td>
-              <td></td>
-              <td style="padding:8px;text-align:center;color:#888;font-size:12px;font-weight:600">${fn(totIni)}</td>
-              <td style="padding:8px;text-align:center;color:var(--gr);font-size:12px;font-weight:700">${totEnt>0?'+'+fn(totEnt):'—'}</td>
-              <td style="padding:8px;text-align:center;color:var(--re);font-size:12px;font-weight:700">${totSai>0?'-'+fn(totSai):'—'}</td>
-              <td></td>
-              <td style="padding:8px;text-align:center;color:#d4a843;font-size:14px;font-weight:800">${fn(totAtual)}</td>
-              <td style="padding:8px;text-align:center;color:var(--ac);font-size:12px;font-weight:700">${fm(totValor)}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>`;
+  tbody.innerHTML = prods.map((p,i)=>{
+    const critico = p.minimo>0&&p.quantidade<=p.minimo;
+    const corQtd = critico?'var(--re)':p.quantidade>0?'var(--gr)':'var(--mu)';
+    const cats = ['Pães','Carnes/Proteínas','Queijos','Molhos/Condimentos','Vegetais','Embalagens','Bebidas','Batatas','Ingredientes','Limpeza','Produtos Secos','Resfriados','Outros'];
+    const uns = ['un','kg','g','L','ml','cx','pct','saco','fardo','lata','garrafa'];
+    return `<tr id="estr-${p.id}" style="background:${i%2===0?'#1e1e1e':'#232323'};border-bottom:1px solid #2a2a2a${critico?';outline:1px solid rgba(231,76,60,0.3)':''}">
+      <td style="padding:6px 10px">
+        <input value="${p.nome}" onchange="estSaveField('${p.id}','nome',this.value)"
+          style="background:transparent;border:none;border-bottom:1px solid transparent;color:#fff;font-size:13px;font-weight:600;width:100%;outline:none"
+          onfocus="this.style.borderBottomColor='#d4a843'" onblur="this.style.borderBottomColor='transparent'">
+        ${critico?'<span style="font-size:9px;background:rgba(231,76,60,.2);color:var(--re);padding:1px 5px;border-radius:6px;margin-left:3px">⚠️</span>':''}
+      </td>
+      <td style="padding:6px 8px;text-align:center">
+        <select onchange="estSaveField('${p.id}','categoria',this.value)"
+          style="background:#2a2a2a;border:1px solid #333;color:#888;font-size:11px;border-radius:4px;padding:2px 4px;width:100%">
+          ${cats.map(c=>`<option${c===p.categoria?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
+      <td style="padding:6px 8px;text-align:center">
+        <select onchange="estSaveField('${p.id}','unidade',this.value)"
+          style="background:#2a2a2a;border:1px solid #333;color:#aaa;font-size:12px;border-radius:4px;padding:2px 4px;width:100%">
+          ${uns.map(u=>`<option${u===p.unidade?' selected':''}>${u}</option>`).join('')}
+        </select>
+      </td>
+      <td style="padding:6px 8px;text-align:right">
+        <input type="number" value="${p.custo}" min="0" step="0.01" onchange="estSaveField('${p.id}','custo',parseFloat(this.value)||0)"
+          style="background:transparent;border:none;border-bottom:1px solid transparent;color:#d4a843;font-size:13px;width:80px;text-align:right;outline:none"
+          onfocus="this.style.borderBottomColor='#d4a843'" onblur="this.style.borderBottomColor='transparent';rEst()">
+      </td>
+      <td style="padding:6px 8px;text-align:right">
+        <input type="number" value="${p.quantidade}" min="0" step="0.001" onchange="estSaveField('${p.id}','quantidade',parseFloat(this.value)||0)"
+          style="background:transparent;border:none;border-bottom:1px solid transparent;color:${corQtd};font-size:15px;font-weight:800;width:80px;text-align:right;outline:none"
+          onfocus="this.style.borderBottomColor='#d4a843'" onblur="this.style.borderBottomColor='transparent';rEst()">
+      </td>
+      <td style="padding:6px 8px;text-align:right">
+        <input type="number" value="${p.minimo}" min="0" step="0.01" onchange="estSaveField('${p.id}','minimo',parseFloat(this.value)||0)"
+          placeholder="0" title="Qtd mínima"
+          style="background:transparent;border:none;border-bottom:1px solid transparent;color:#888;font-size:12px;width:60px;text-align:right;outline:none"
+          onfocus="this.style.borderBottomColor='#d4a843'" onblur="this.style.borderBottomColor='transparent';rEst()">
+      </td>
+      <td style="padding:6px 8px;text-align:right;font-size:13px;font-weight:600;color:var(--ac)">${fm(p.quantidade*p.custo)}</td>
+      <td style="padding:6px 8px;text-align:center">
+        <button class="btn br sm" onclick="delIt('estoque','${p.id}',rEst)" style="padding:3px 8px;font-size:11px" title="Excluir">🗑</button>
+      </td>
+    </tr>`;
   }).join('');
+
+  // Rodapé com totais
+  const totQtd = prods.reduce((s,p)=>s+p.quantidade,0);
+  const totVal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
+  if(tfoot) tfoot.innerHTML=`<tr style="background:#111;border-top:2px solid #d4a843">
+    <td style="padding:10px 14px;font-weight:700;color:#d4a843;font-size:13px" colspan="4">TOTAL GERAL (${prods.length} produtos)</td>
+    <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:#d4a843">${fn(totQtd)}</td>
+    <td></td>
+    <td style="padding:10px;text-align:right;font-size:15px;font-weight:800;color:var(--ac)">${fm(totVal)}</td>
+    <td></td>
+  </tr>`;
 }
 
 function estImprimirTabela(){
-  const busca = gv('est-busca').toLowerCase();
-  const mesRef = gv('est-mes-ref') || (() => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; })();
-  const [anoRef, mmRef] = mesRef.split('-');
-  const primeiroDia = `${anoRef}-${mmRef}-01`;
-  const ultimoDia = `${anoRef}-${mmRef}-31`;
   let prods = DB.get('estoque');
-  if(busca) prods = prods.filter(p=>p.nome.toLowerCase().includes(busca));
   prods.sort((a,b)=>a.nome.localeCompare(b.nome));
-
-  const entradas = DB.get('entradas')||[];
-  const dists = DB.get('distribuicoes')||[];
-  const mov = {};
-  prods.forEach(p=>{ mov[p.id]={iniMes:0,entrou:0,saiu:0,lojas:{}}; });
-  entradas.filter(e=>e.data>=primeiroDia&&e.data<=ultimoDia).forEach(e=>{
-    if(mov[e.produtoId]) mov[e.produtoId].entrou += parseFloat(e.quantidade)||0;
-  });
-  dists.filter(d=>d.data>=primeiroDia&&d.data<=ultimoDia).forEach(d=>{
-    (d.itens||[]).forEach(i=>{
-      if(mov[i.prodId]){
-        const qtd = parseFloat(i.quantidade)||0;
-        mov[i.prodId].saiu += qtd;
-        const loja = d.destino||'—';
-        if(!mov[i.prodId].lojas[loja]) mov[i.prodId].lojas[loja]=0;
-        mov[i.prodId].lojas[loja] += qtd;
-      }
-    });
-  });
-  prods.forEach(p=>{
-    const m=mov[p.id]||{entrou:0,saiu:0};
-    m.iniMes=Math.max(0,(p.quantidade||0)-m.entrou+m.saiu);
-  });
-
-  const cats = {};
-  prods.forEach(p=>{ const c=p.categoria||'Outros'; if(!cats[c])cats[c]=[]; cats[c].push(p); });
   const cfg = getCfg();
   const logoHtml = localStorage.getItem('img_sysLogo') ? `<img src="${localStorage.getItem('img_sysLogo')}" style="height:50px;object-fit:contain;display:block;margin:0 auto 8px">` : '';
+  const totVal = prods.reduce((s,p)=>s+(p.quantidade*p.custo),0);
 
-  let tabelas = Object.entries(cats).map(([cat,itens])=>`
-    <div style="margin-bottom:20px;page-break-inside:avoid">
-      <div style="background:#d4a843;color:#000;padding:8px 12px;font-weight:700;font-size:13px;border-radius:6px 6px 0 0">${cat}</div>
-      <table style="width:100%;border-collapse:collapse">
-        <thead><tr style="background:#f5f0e0">
-          <th style="text-align:left;padding:7px 10px;font-size:11px;border-bottom:1px solid #ddd">Produto</th>
-          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center">Un.</th>
-          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center">Início Mês</th>
-          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center;color:green">Entrou</th>
-          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd;text-align:center;color:red">Saiu</th>
-          <th style="padding:7px 8px;font-size:11px;border-bottom:1px solid #ddd">Destino (loja)</th>
-          <th style="padding:7px 8px;font-size:12px;border-bottom:1px solid #ddd;text-align:center;font-weight:800;color:#b8860b">Atual</th>
-        </tr></thead>
-        <tbody>
-          ${itens.map((p,i)=>{
-            const m=mov[p.id]||{iniMes:0,entrou:0,saiu:0};
-            const critico=p.minimo>0&&p.quantidade<=p.minimo;
-            return `<tr style="background:${i%2===0?'#fff':'#fafaf5'}${critico?';background:#fff0f0':''}">
-              <td style="padding:7px 10px;font-size:12px;font-weight:600">${p.nome}${critico?' ⚠️':''}</td>
-              <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.unidade}</td>
-              <td style="padding:7px 8px;text-align:center;font-size:12px;color:#666">${fn(m.iniMes)}</td>
-              <td style="padding:7px 8px;text-align:center;font-size:12px;color:green;font-weight:600">${m.entrou>0?'+'+fn(m.entrou):'—'}</td>
-              <td style="padding:7px 8px;text-align:center;font-size:12px;color:red;font-weight:600">${m.saiu>0?'-'+fn(m.saiu):'—'}</td>
-              <td style="padding:7px 8px;font-size:11px;color:#555">${m.saiu>0?Object.entries(m.lojas||{}).map(([lj,qt])=>`${lj}: ${fn(qt)}`).join(', '):'—'}</td>
-              <td style="padding:7px 8px;text-align:center;font-size:14px;font-weight:800;color:${critico?'red':'#b8860b'}">${fn(p.quantidade)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`).join('');
+  const rows = prods.map((p,i)=>{
+    const critico = p.minimo>0&&p.quantidade<=p.minimo;
+    return `<tr style="background:${i%2===0?'#fff':'#f9f9f7'}${critico?';background:#fff5f5':''}">
+      <td style="padding:7px 12px;font-size:12px;font-weight:600">${p.nome}${critico?' ⚠️':''}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.categoria||'—'}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;color:#666">${p.unidade}</td>
+      <td style="padding:7px 10px;text-align:right;font-size:12px;color:#8B6914">${fm(p.custo)}</td>
+      <td style="padding:7px 10px;text-align:right;font-size:14px;font-weight:800;color:${critico?'red':'#2e7d32'}">${fn(p.quantidade)}</td>
+      <td style="padding:7px 10px;text-align:right;font-size:12px;font-weight:600;color:#1a5276">${fm(p.quantidade*p.custo)}</td>
+    </tr>`;
+  }).join('');
 
-  const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8"><title>Estoque Central — ${mmRef}/${anoRef}</title>
+  const win = window.open('about:blank','_blank');
+  const html = `<!DOCTYPE html><html><head>
+    <meta charset="UTF-8"><title>Estoque Central — ${new Date().toLocaleDateString('pt-BR')}</title>
     <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;padding:20px;max-width:900px;margin:0 auto;color:#333}
-    @media print{.no-print{display:none}@page{margin:12mm;size:A4}}
-    </style></head><body>
-    <div class="no-print" style="position:fixed;top:10px;right:10px;display:flex;gap:8px;z-index:999">
-      <button onclick="window.print()" style="background:#d4a843;color:#000;border:none;padding:10px 20px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer">🖨️ Imprimir / Salvar PDF</button>
-      <button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:10px 14px;border-radius:7px;cursor:pointer">✕</button>
+    @media print{.no-print{display:none}@page{margin:12mm;size:A4}}</style>
+  </head><body>
+    <div class="no-print" style="position:fixed;top:10px;right:10px;display:flex;gap:8px;z-index:999;background:#fff;padding:6px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+      <button onclick="window.print()" style="background:#d4a843;color:#000;border:none;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">🖨️ Imprimir / Salvar PDF</button>
+      <button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:9px 12px;border-radius:6px;cursor:pointer">✕</button>
     </div>
-    <div style="margin-top:50px;text-align:center;border-bottom:3px solid #d4a843;padding-bottom:16px;margin-bottom:20px">
+    <div style="margin-top:50px;text-align:center;border-bottom:3px solid #d4a843;padding-bottom:14px;margin-bottom:20px">
       ${logoHtml}
-      <div style="font-size:24px;font-weight:800;color:#1a1a18">${cfg.logo.replace('\n',' ')}</div>
-      <div style="font-size:18px;font-weight:700;margin-top:8px">📦 ESTOQUE CENTRAL</div>
-      <div style="font-size:13px;color:#555;margin-top:4px">Mês: ${mmRef}/${anoRef} &nbsp;·&nbsp; Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+      <div style="font-size:22px;font-weight:800">${cfg.logo.replace('\n',' ')}</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px">📦 ESTOQUE CENTRAL</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
     </div>
-    ${tabelas}
-  </body></html>`);
-  win.document.close();
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:#d4a843">
+        <th style="text-align:left;padding:8px 12px;font-size:11px;color:#000;text-transform:uppercase">Produto</th>
+        <th style="padding:8px;font-size:11px;color:#000;text-transform:uppercase;text-align:center">Categoria</th>
+        <th style="padding:8px;font-size:11px;color:#000;text-transform:uppercase;text-align:center">Un.</th>
+        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Custo Unit.</th>
+        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Qtd Estoque</th>
+        <th style="padding:8px 10px;font-size:11px;color:#000;text-transform:uppercase;text-align:right">Valor Total</th>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="background:#222">
+        <td colspan="4" style="padding:9px 12px;font-weight:700;color:#d4a843;font-size:13px">TOTAL GERAL — ${prods.length} produtos</td>
+        <td style="padding:9px 10px;text-align:right;font-weight:800;font-size:14px;color:#d4a843">${fn(prods.reduce((s,p)=>s+p.quantidade,0))}</td>
+        <td style="padding:9px 10px;text-align:right;font-weight:800;font-size:14px;color:#d4a843">${fm(totVal)}</td>
+      </tfoot>
+    </table>
+  </body></html>`;
+  if(win){ win.document.write(html); win.document.close(); }
+  else toast('⚠️ Permita popups no navegador para imprimir!');
 }
+
+
+
 
 
 function ajE(id){
@@ -2038,6 +2013,21 @@ function ajE(id){
   const n=prompt(`"${p.nome}"\nAtual: ${fn(p.quantidade)} ${p.unidade}\n\nNova quantidade:`);
   if(n===null)return;const v=parseFloat(n);if(isNaN(v))return alert('Valor inválido!');
   p.quantidade=v;DB.set('estoque',l);rEst();
+}
+
+function estSaveField(id, campo, valor){
+  const l = DB.get('estoque');
+  const p = l.find(x=>x.id===id);
+  if(!p) return;
+  p[campo] = valor;
+  DB.set('estoque', l);
+  // Atualiza valor total da linha sem re-renderizar tudo
+  const row = document.getElementById('estr-'+id);
+  if(row){
+    const cells = row.querySelectorAll('td');
+    const valorTotalCell = cells[6];
+    if(valorTotalCell) valorTotalCell.textContent = fm(p.quantidade * p.custo);
+  }
 }
 
 function estEditMin(id){
@@ -2138,12 +2128,47 @@ function addEn(){
   rEnt();rEst();popProds();
   toast(`✅ ${p.nome} registrado!`);
 }
-function rEnt(){const l=DB.get('entradas').sort((a,b)=>b.data.localeCompare(a.data));const now=new Date();const px=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;const ma=l.filter(e=>e.data.startsWith(px));const tm=ma.reduce((s,e)=>s+e.valor,0);const ta=l.filter(e=>e.data.startsWith(now.getFullYear()+'')).reduce((s,e)=>s+e.valor,0);document.getElementById('en-cards').innerHTML=`<div class="c go"><div class="lb">Compras Mês</div><div class="vl">${fm(tm)}</div></div><div class="c"><div class="lb">Compras Ano</div><div class="vl">${fm(ta)}</div></div><div class="c"><div class="lb">Entradas Mês</div><div class="vl">${ma.length}</div><div class="sb2">pedidos</div></div>`;const tb=document.getElementById('tb-en');if(!l.length){tb.innerHTML='<tr><td colspan="8" class="empty">Nenhuma entrada</td></tr>';return}tb.innerHTML=l.map(e=>`<tr><td>${fd(e.data)}</td><td><strong>${e.produtoNome}</strong></td><td>${e.fornecedor}</td><td>${fn(e.quantidade)} ${e.unidade}</td><td style="color:var(--ac);font-weight:600">${fm(e.valor)}</td><td>${fm(e.valor/e.quantidade)}/${e.unidade}</td><td>${e.nf}</td><td><button class="btn br sm" onclick="delIt('entradas','${e.id}',rEnt)">🗑</button></td></tr>`).join('');rMd(l)}
+function rEnt(){
+  const l=DB.get('entradas').sort((a,b)=>b.data.localeCompare(a.data));
+  const now=new Date();const px=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const ma=l.filter(e=>e.data.startsWith(px));
+  const tm=ma.reduce((s,e)=>s+e.valor,0);
+  const ta=l.filter(e=>e.data.startsWith(now.getFullYear()+'')).reduce((s,e)=>s+e.valor,0);
+  document.getElementById('en-cards').innerHTML=`<div class="c go"><div class="lb">Compras Mês</div><div class="vl">${fm(tm)}</div></div><div class="c"><div class="lb">Compras Ano</div><div class="vl">${fm(ta)}</div></div><div class="c"><div class="lb">Entradas Mês</div><div class="vl">${ma.length}</div><div class="sb2">pedidos</div></div>`;
+  const tb=document.getElementById('tb-en');
+  if(!l.length){tb.innerHTML='<tr><td colspan="8" class="empty">Nenhuma entrada</td></tr>';return}
+  const cats=['Pães','Carnes/Proteínas','Queijos','Molhos/Condimentos','Vegetais','Embalagens','Bebidas','Batatas','Ingredientes','Limpeza','Produtos Secos','Resfriados','Outros'];
+  tb.innerHTML=l.map(e=>`<tr>
+    <td style="min-width:110px">${ei('entradas',e.id,'data',e.data,'date')}</td>
+    <td style="min-width:140px;font-weight:600">${ei('entradas',e.id,'produtoNome',e.produtoNome,'text')}</td>
+    <td style="min-width:120px">${ei('entradas',e.id,'fornecedor',e.fornecedor,'text')}</td>
+    <td style="min-width:80px;text-align:right">${ei('entradas',e.id,'quantidade',e.quantidade,'number','','text-align:right;width:60px')} ${e.unidade}</td>
+    <td style="min-width:80px;color:var(--ac);font-weight:600">${ei('entradas',e.id,'valor',e.valor,'number','','color:var(--ac);font-weight:700;text-align:right;width:75px')}</td>
+    <td style="color:#888;font-size:12px">${fm(e.valor/e.quantidade)}/${e.unidade}</td>
+    <td style="min-width:80px">${ei('entradas',e.id,'nf',e.nf||'','text')}</td>
+    <td><button class="btn br sm" onclick="delIt('entradas','${e.id}',rEnt)">🗑</button></td>
+  </tr>`).join('');
+  rMd(l);
+}
 function rMd(l){const m={};l.forEach(e=>{if(!m[e.produtoId])m[e.produtoId]={nome:e.produtoNome,cat:e.produtoCat,ms:new Set(),qt:0,vl:0};m[e.produtoId].ms.add(e.data.slice(0,7));m[e.produtoId].qt+=e.quantidade;m[e.produtoId].vl+=e.valor});const tb=document.getElementById('tb-md');const rows=Object.values(m);if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="empty">Sem dados</td></tr>';return}tb.innerHTML=rows.map(r=>{const n=r.ms.size;return`<tr><td><strong>${r.nome}</strong></td><td>${r.cat}</td><td>${n}</td><td>${fn(r.qt/n)}</td><td style="color:var(--ac);font-weight:600">${fm(r.vl/n)}</td><td>${fm(r.vl)}</td></tr>`}).join('')}
 
 // ── TRANSFERÊNCIAS ──
 function addTf(){const d=gv('tf-dt'),pid=gv('tf-pr'),ds=gv('tf-ds'),qt=parseFloat(gv('tf-qt')),ob=gv('tf-ob');if(!d||!pid||!qt)return alert('Preencha os campos!');const prods=DB.get('estoque');const p=prods.find(x=>x.id===pid);if(!p)return;if(p.quantidade<qt)return alert('Estoque insuficiente! Disponível: '+p.quantidade+' '+p.unidade);p.quantidade-=qt;DB.set('estoque',prods);const l=DB.get('transferencias');l.push({id:uid(),data:d,produtoId:pid,produtoNome:p.nome,destino:ds,quantidade:qt,valorEst:p.custo*qt,obs:ob||'—',unidade:p.unidade});DB.set('transferencias',l);sv('tf-qt','');sv('tf-ob','');rTrf();rEst()}
-function rTrf(){const l=DB.get('transferencias').sort((a,b)=>b.data.localeCompare(a.data));const tb=document.getElementById('tb-tf');if(!l.length){tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma transferência</td></tr>';return}tb.innerHTML=l.map(t=>`<tr><td>${fd(t.data)}</td><td><strong>${t.produtoNome}</strong></td><td>${chip(t.destino)}</td><td>${fn(t.quantidade)} ${t.unidade}</td><td>${fm(t.valorEst)}</td><td>${t.obs}</td><td><button class="btn br sm" onclick="delIt('transferencias','${t.id}',rTrf)">🗑</button></td></tr>`).join('')}
+function rTrf(){
+  const l=DB.get('transferencias').sort((a,b)=>b.data.localeCompare(a.data));
+  const tb=document.getElementById('tb-tf');
+  if(!l.length){tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma transferência</td></tr>';return}
+  const lojas=gU().slice(1);
+  tb.innerHTML=l.map(t=>`<tr>
+    <td style="min-width:110px">${ei('transferencias',t.id,'data',t.data,'date')}</td>
+    <td style="min-width:140px;font-weight:600">${ei('transferencias',t.id,'produtoNome',t.produtoNome,'text')}</td>
+    <td style="min-width:100px">${ei('transferencias',t.id,'destino',t.destino,'text',lojas)}</td>
+    <td style="min-width:80px;text-align:right">${ei('transferencias',t.id,'quantidade',t.quantidade,'number','','text-align:right;width:60px')} ${t.unidade}</td>
+    <td style="color:var(--ac)">${fm(t.valorEst)}</td>
+    <td style="min-width:120px">${ei('transferencias',t.id,'obs',t.obs||'','text')}</td>
+    <td><button class="btn br sm" onclick="delIt('transferencias','${t.id}',rTrf)">🗑</button></td>
+  </tr>`).join('');
+}
 
 // ── DRE ──
 function rDRE(){const ano=parseInt(gv('dre-ano')||new Date().getFullYear());const mes=gv('dre-mes');const un=gv('dre-un');let re=DB.get('receitas');let de=DB.get('despesas');if(un!=='all'){re=re.filter(r=>r.unidade===un);de=de.filter(d=>d.unidade===un||d.unidade==='Geral (Todas)')}re=re.filter(r=>r.data.startsWith(ano));de=de.filter(d=>d.data.startsWith(ano));if(mes!=='all'){const mm=String(mes).padStart(2,'0');re=re.filter(r=>r.data.slice(5,7)===mm);de=de.filter(d=>d.data.slice(5,7)===mm)}const tR=re.reduce((s,r)=>s+r.valor,0);const dF=de.filter(d=>d.tipo==='Fixo').reduce((s,d)=>s+d.valor,0);const dV=de.filter(d=>d.tipo==='Variável').reduce((s,d)=>s+d.valor,0);const tD=dF+dV;const lc=tR-tD;const mg=tR>0?((lc/tR)*100).toFixed(1):0;const cR={};re.forEach(r=>{cR[r.categoria]=(cR[r.categoria]||0)+r.valor});const cDF={};de.filter(d=>d.tipo==='Fixo').forEach(d=>{cDF[d.categoria]=(cDF[d.categoria]||0)+d.valor});const cDV={};de.filter(d=>d.tipo==='Variável').forEach(d=>{cDV[d.categoria]=(cDV[d.categoria]||0)+d.valor});document.getElementById('dre-c').innerHTML=`
@@ -2203,21 +2228,68 @@ function ftRenderLista(){
   const cors={'Hambúrguer':'var(--ac)','Acompanhamento':'var(--gr)','Molho':'var(--or)','Bebida':'var(--bl)','Outro':'var(--mu)'};
   g.innerHTML=l.map(f=>{
     const cor=cors[f.categoria]||'var(--mu)';
-    return`<div class="ftc" style="border-left:3px solid ${cor}">
-      <div><div class="ftn">${f.nome}</div><div class="ftm">${f.categoria} · Rende ${f.rendimento} un.</div></div>
+    const ings = f.ingredientes||[];
+    const ingRows = ings.map(i=>`
+      <tr style="border-bottom:1px solid #2a2a2a">
+        <td style="padding:7px 10px;font-size:13px;color:#fff">${i.nome}</td>
+        <td style="padding:7px 8px;text-align:center;font-size:12px;color:#aaa">${fn(i.gramaturaUsada)} ${i.unidade}</td>
+        <td style="padding:7px 8px;text-align:right;font-size:12px;color:#888">${fm(i.qtdComprada)} ${i.unidade} = ${fm(i.valorPago)}</td>
+        <td style="padding:7px 8px;text-align:right;font-size:13px;font-weight:700;color:var(--re)">${fm(i.custoReceita)}</td>
+      </tr>`).join('');
+    return`<div class="ftc" style="border-left:3px solid ${cor};cursor:pointer" onclick="ftToggle('${f.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="ftn">${f.nome}</div>
+          <div class="ftm">${f.categoria} · Rende ${f.rendimento} un.</div>
+        </div>
+        <span id="ft-arr-${f.id}" style="color:#888;font-size:16px;transition:.2s">▼</span>
+      </div>
       <div class="ftn2">
         <div class="fn"><div class="fl">CMV/Un</div><div class="fv" style="color:var(--re)">${fm(f.custoUnitario)}</div></div>
         <div class="fn"><div class="fl">Preço Venda</div><div class="fv" style="color:var(--gr)">${fm(f.precoVenda)}</div></div>
         <div class="fn"><div class="fl">% CMV</div><div class="fv" style="color:var(--or)">${f.cmv}%</div></div>
         <div class="fn"><div class="fl">Markup</div><div class="fv" style="color:var(--ac)">${f.markup}x</div></div>
       </div>
-      <div style="font-size:12px;color:var(--mu)">${(f.ingredientes||[]).length} ingrediente(s)</div>
-      <div class="fx">
+
+      <!-- Ingredientes (expandível) -->
+      <div id="ft-det-${f.id}" style="display:none;margin-top:12px;border-top:1px solid #333;padding-top:12px">
+        <div style="font-size:11px;color:#d4a843;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📋 INGREDIENTES (${ings.length})</div>
+        ${ings.length ? `<table style="width:100%;border-collapse:collapse;background:#1a1a1a;border-radius:8px;overflow:hidden">
+          <thead><tr style="background:#111">
+            <th style="text-align:left;padding:7px 10px;font-size:10px;color:#d4a843;text-transform:uppercase;letter-spacing:1px">Ingrediente</th>
+            <th style="padding:7px 8px;font-size:10px;color:#888;text-transform:uppercase;text-align:center">Qtd Usada</th>
+            <th style="padding:7px 8px;font-size:10px;color:#888;text-transform:uppercase;text-align:right">Compra</th>
+            <th style="padding:7px 8px;font-size:10px;color:var(--re);text-transform:uppercase;text-align:right">Custo</th>
+          </tr></thead>
+          <tbody>${ingRows}</tbody>
+          <tfoot><tr style="background:#111;border-top:2px solid #d4a843">
+            <td colspan="3" style="padding:8px 10px;font-weight:700;color:#d4a843;font-size:12px">CUSTO TOTAL DA RECEITA</td>
+            <td style="padding:8px;text-align:right;font-weight:800;font-size:14px;color:var(--re)">${fm(ings.reduce((s,i)=>s+i.custoReceita,0))}</td>
+          </tr></tfoot>
+        </table>` : '<div style="color:#888;font-size:13px;text-align:center;padding:12px">Nenhum ingrediente cadastrado</div>'}
+        <div style="margin-top:10px;padding:10px;background:#1a1a1a;border-radius:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;text-align:center">
+          <div><div style="color:#888">Rendimento</div><div style="color:#fff;font-weight:700">${f.rendimento} un.</div></div>
+          <div><div style="color:#888">Custo/un</div><div style="color:var(--re);font-weight:700">${fm(f.custoUnitario)}</div></div>
+          <div><div style="color:#888">Preço sugerido</div><div style="color:var(--gr);font-weight:700">${fm(f.precoVenda)}</div></div>
+        </div>
+        ${f.modo?`<div style="margin-top:10px;padding:10px;background:#1a1a1a;border-radius:8px;font-size:12px;color:#aaa;line-height:1.6"><div style="color:#d4a843;font-weight:700;margin-bottom:4px">📝 MODO DE PREPARO</div>${f.modo}</div>`:''}
+      </div>
+
+      <div class="fx" style="margin-top:12px" onclick="event.stopPropagation()">
         <button class="btn bo sm" style="flex:1" onclick="ftEditar('${f.id}')">✏️ Editar</button>
         <button class="btn br sm" onclick="delIt('fichasTecnicas','${f.id}',ftRenderLista)">🗑</button>
       </div>
     </div>`;
   }).join('');
+}
+
+function ftToggle(id){
+  const det = document.getElementById('ft-det-'+id);
+  const arr = document.getElementById('ft-arr-'+id);
+  if(!det) return;
+  const open = det.style.display !== 'none';
+  det.style.display = open ? 'none' : 'block';
+  if(arr) arr.style.transform = open ? '' : 'rotate(180deg)';
 }
 
 function ftNova(){
@@ -3368,13 +3440,14 @@ function rDist(){
   const tb=document.getElementById('tb-dist');
   if(!tb)return;
   if(!l.length){tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma distribuição registrada</td></tr>';return}
+  const lojas=gU().slice(1);
   tb.innerHTML=l.map(d=>`<tr>
-    <td>${fd(d.data)}</td>
-    <td>${chip(d.destino)}</td>
-    <td style="font-size:12px;max-width:200px">${(d.itens||[]).map(i=>`${i.nome}`).join(', ')}</td>
+    <td style="min-width:110px">${ei('distribuicoes',d.id,'data',d.data,'date')}</td>
+    <td style="min-width:100px">${ei('distribuicoes',d.id,'destino',d.destino,'text',lojas)}</td>
+    <td style="font-size:12px;max-width:200px;color:#aaa">${(d.itens||[]).map(i=>`${i.nome} (${fn(i.quantidade)})`).join(', ')}</td>
     <td style="text-align:center">${d.qtdItens||d.itens?.length||0}</td>
     <td style="color:var(--ac);font-weight:600">${fm(d.valorTotal||0)}</td>
-    <td>${d.obs}</td>
+    <td style="min-width:120px">${ei('distribuicoes',d.id,'obs',d.obs||'','text')}</td>
     <td><button class="btn br sm" onclick="delDist('${d.id}')">🗑</button></td>
   </tr>`).join('');
 }
@@ -3580,6 +3653,7 @@ function massaModoTab(modo, el){
 
 const MASSA_COLS = {
   entrada:     {grid:'2fr 0.8fr 0.8fr 1fr auto', heads:['Produto','Unid.','Quantidade','Valor Total (R$)','']},
+  estoque:     {grid:'2fr 0.8fr 0.8fr 1fr auto', heads:['Produto','Unid.','Qtd em Estoque','Valor Unit. (R$)','']},
   distribuicao:{grid:'2fr 0.8fr 0.8fr 1fr auto', heads:['Produto','Unid.','Quantidade','Valor/un (R$)','']},
   saida:       {grid:'2fr 0.8fr 0.8fr 1fr auto', heads:['Produto','Unid.','Quantidade','Valor/un (R$)','']},
   contagem:    {grid:'2fr 0.8fr 0.8fr 1fr auto', heads:['Produto','Unid.','Qtd Contada','Valor/un (R$)','']},
@@ -3596,7 +3670,6 @@ function massaInit(){
   document.getElementById('massa-linhas').innerHTML = '';
   document.getElementById('massa-preview-wrap').style.display = 'none';
   document.getElementById('massa-msg').innerHTML = '';
-  // Começar com 5 linhas vazias
   for(let i=0;i<5;i++) massaAddLinha(true);
   massaRenderTodos();
   massaCalcTotais();
@@ -3604,24 +3677,23 @@ function massaInit(){
 
 function massaTipoChange(){
   _massaTipo = gv('massa-tipo');
-  const isEnt = _massaTipo === 'entrada';
+  const isEnt  = _massaTipo === 'entrada';
+  const isEst  = _massaTipo === 'estoque';
   const isDist = _massaTipo === 'distribuicao';
-  const isSai = _massaTipo === 'saida';
+  const isSai  = _massaTipo === 'saida';
   const isCont = _massaTipo === 'contagem';
   document.getElementById('massa-loja-wrap').style.display = isDist ? 'block' : 'none';
   document.getElementById('massa-forn-wrap').style.display = isEnt ? 'block' : 'none';
-  document.getElementById('massa-obs-wrap').style.display = (isSai||isCont) ? 'block' : 'none';
-  if(isCont){
-    const obsLabel = document.querySelector('#massa-obs-wrap label');
-    if(obsLabel) obsLabel.textContent = 'Semana / Período';
-    const obsInput = document.getElementById('massa-obs');
-    if(obsInput) obsInput.placeholder = 'Ex: Semana 01/04 a 07/04';
-  }
-  const titles = {entrada:'🛒 Produtos Recebidos (Entradas)',distribuicao:'🚚 Produtos para Distribuir',saida:'📤 Produtos para Saída',contagem:'📊 Contagem de Estoque'};
+  document.getElementById('massa-obs-wrap').style.display = (isSai||isCont||isEst) ? 'block' : 'none';
+  const obsLabel = document.querySelector('#massa-obs-wrap label');
+  const obsInput = document.getElementById('massa-obs');
+  if(isCont){ if(obsLabel) obsLabel.textContent='Semana / Período'; if(obsInput) obsInput.placeholder='Ex: Semana 01/04 a 07/04'; }
+  else if(isEst){ if(obsLabel) obsLabel.textContent='Observação (opcional)'; if(obsInput) obsInput.placeholder='Ex: Inventário inicial'; }
+  else { if(obsLabel) obsLabel.textContent='Observação'; if(obsInput) obsInput.placeholder=''; }
+  const titles = {entrada:'🛒 Produtos Recebidos',estoque:'📦 Atualização de Estoque',distribuicao:'🚚 Distribuição',saida:'📤 Saída',contagem:'📊 Contagem'};
   const th = document.getElementById('massa-table-title');
   if(th) th.textContent = titles[_massaTipo];
-  // Atualizar cabeçalho
-  const cols = MASSA_COLS[_massaTipo];
+  const cols = MASSA_COLS[_massaTipo]||MASSA_COLS['entrada'];
   const thead = document.getElementById('massa-thead');
   if(thead){ thead.style.gridTemplateColumns = cols.grid; thead.innerHTML = cols.heads.map(h=>`<span>${h}</span>`).join(''); }
   massaRenderTodos();
@@ -3863,15 +3935,29 @@ function massaConfirmar(){
       criadoEm:new Date().toISOString(), viaLancamentoMassa:true
     });
     DB.set('contagens',contagens);
+
+  } else if(tipo==='estoque'){
+    // Atualiza/cria produtos no estoque diretamente
+    const prods = DB.get('estoque');
+    let novos=0, atualizados=0;
+    validas.forEach(l=>{
+      const qtd = parseFloat(l.qtd)||0;
+      const custo = parseFloat(l.valor)||0;
+      // Busca produto existente por id ou nome
+      let p = prods.find(x=>x.id===l.prodId) || prods.find(x=>x.nome.toLowerCase()===l.nome.toLowerCase());
+      if(p){
+        p.quantidade = qtd; // sobrescreve quantidade
+        if(custo>0) p.custo = custo;
+        atualizados++;
+      } else {
+        prods.push({id:l.prodId||uid(),nome:l.nome,categoria:'Outros',unidade:l.unidade||'un',quantidade:qtd,minimo:0,custo:custo});
+        novos++;
+      }
+    });
+    DB.set('estoque',prods);
+    popProds();
+    toast(`✅ Estoque: ${novos} novo(s) · ${atualizados} atualizado(s)!`);
   }
-
-  // Salvar histórico de lotes
-  const lotes = DB.get('lotesLancamento')||[];
-  lotes.push(loteInfo);
-  DB.set('lotesLancamento',lotes);
-
-  msg.innerHTML=`<span style="color:var(--gr)">✅ ${validas.length} produto(s) lançados com sucesso!</span>`;
-  toast(`✅ ${validas.length} produtos lançados!`);
   rEst(); bdg();
   // Limpar para novo lançamento
   massaLinhas = [];
@@ -4231,6 +4317,25 @@ function massaConfirmarColar(){
       criadoEm:new Date().toISOString(), viaLancamentoMassa:true
     });
     DB.set('contagens',contagens);
+
+  } else if(tipo==='estoque'){
+    let novos=0, atualizados=0;
+    validas.forEach(l=>{
+      const qtd = parseFloat(l.qtd)||0;
+      const custo = parseFloat(l.valor)||0;
+      let p = prods.find(x=>x.id===l.prodId) || prods.find(x=>x.nome.toLowerCase()===l.nome.toLowerCase());
+      if(p){
+        p.quantidade = qtd;
+        if(custo>0) p.custo = custo;
+        atualizados++;
+      } else {
+        prods.push({id:l.prodId||uid(),nome:l.nome,categoria:'Outros',unidade:l.unidade||'un',quantidade:qtd,minimo:0,custo:custo});
+        novos++;
+      }
+    });
+    DB.set('estoque',prods);
+    popProds();
+    toast(`✅ Estoque: ${novos} novo(s) · ${atualizados} atualizado(s)!`);
   }
   lotes.push(loteInfo); DB.set('lotesLancamento',lotes);
 
@@ -4249,8 +4354,8 @@ function rMassaHist(){
   const tb = document.getElementById('tb-massa-hist');
   if(!tb) return;
   if(!l.length){ tb.innerHTML='<tr><td colspan="6" class="empty">Nenhum lançamento em massa ainda</td></tr>'; return; }
-  const icons={entrada:'🛒',distribuicao:'🚚',saida:'📤',contagem:'📊'};
-  const labels={entrada:'Entrada',distribuicao:'Distribuição',saida:'Saída',contagem:'Contagem'};
+  const icons={entrada:'🛒',estoque:'📦',distribuicao:'🚚',saida:'📤',contagem:'📊'};
+  const labels={entrada:'Entrada',estoque:'Estoque',distribuicao:'Distribuição',saida:'Saída',contagem:'Contagem'};
   tb.innerHTML = l.map(x=>`<tr>
     <td>${fd(x.data)}</td>
     <td><span class="bs ${x.tipo==='entrada'?'ok':x.tipo==='distribuicao'?'pg':'wn'}">${icons[x.tipo]} ${labels[x.tipo]}</span></td>
